@@ -7,6 +7,7 @@
 #include <QBrush>
 #include <QPen>
 #include <QPointF>
+#include <QDebug>
 #include <QMouseEvent>
 #include <QMessageBox>
 

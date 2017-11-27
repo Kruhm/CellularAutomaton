@@ -28,74 +28,107 @@ Overlay::Overlay(QWidget *parent): QWidget(parent){
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(changeSizeBtn,SIGNAL(clicked()),this,SLOT(onChangeBtnClicked()));
-    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
-    //create game objects
+    //creating the games
     gameOfLife = new CAbase(universeSize->value(),gameInterval->value(),true);
     snakeTail = new Snake(new QPoint(0,0),0);
     snakeHead = snakeTail;
-
-    //start the evolution
-    evolutionChoice();
 }
 
 Overlay::~Overlay(){
+    /*
+     * destroy every not otherwise destroyed pointer
+     */
     delete gameField;
 }
 
 void Overlay::evolutionChoice(){
+    /*
+     *  decides which game should be progressing, based on the game mode SpinBox
+     */
+    update();
     if(gameMode->currentText()=="Snake"){
         this->doTheSnakeThing();
-    }else
-        gameOfLife->start();
+    }else{
+        if(!gameOfLife->isRunning()){   // if the thread isn't currently running
+            gameOfLife->start();    // start the GoL thread
+        }
+    }
+
 }
 
 void Overlay::paintEvent(QPaintEvent *event){
+    /*
+     * Draws the grid on the left side of the Window.
+     * Currently only for Game of Life, Blue is an alive cell, White is a dead cell
+     */
     gameField->clear();
     int dim = universeSize->value();
-    for(int i = 0; i < dim*dim; i++){
-        gameField->drawFieldCell(i/dim,i%dim,10,gameOfLife->getCellState(i%dim,i/dim));
+    for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
+        gameField->drawFieldCell(i/dim,i%dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
     }
-    gameField->showField();
+    gameField->showField(); // make board visible
 }
 
 void Overlay::doTheSnakeThing(){
+    /*
+     * Moves the snake in a given direction specified by a KeyPress
+     */
     Snake* current = snakeTail;
-    while(current->getParent()){
-        current->evolve();
-        current = current->getParent();
+    while(current->getParent()){ // As long as the current SnakePart has a Parent
+        current->evolve();      // Move BodyPart
+        current = current->getParent(); // go to the next BodyPart
     }
-    snakeHead = current;
+    snakeHead = current;    // Remember the last element of the list
 }
 
 void Overlay::onStartBtnClicked(){
-    qDebug() <<gameInterval->value();
+    /*
+     * Starts the GameOfLife Thread with the given interval
+     */
     gameOfLife->setStackSize(gameInterval->value());
     gameOfLife->setDoEvolution(true);
     gameOfLife->start();
 }
 
 void Overlay::onPauseBtnClicked(){
+    /*
+     * Stops the currently running GameOfLife Thread
+     */
     gameOfLife->setDoEvolution(false);
 }
 
 void Overlay::onClearBtnClicked(){
+    /*
+     * Wipes the Board of every living cell
+     */
     gameOfLife->wipe();
     update();
 }
 
 void Overlay::onChangeBtnClicked(){
+    /*
+     * Wipes the board and changes the universe size
+     */
     int newDim = universeSize->value();
     gameOfLife->setSize(newDim,newDim);
     update();
 }
 
 void Overlay::onUniverseSizeChanged(){
+    /*
+     * Wipes the board and changes the universe size
+     */
     int dim = universeSize->value();
     gameOfLife->setSize(dim,dim);
+    update();
 }
 
 void Overlay::onIntervalValueChanged(){
+    /*
+     * changes the refresh rate of the evolution done by the GameOfLife object
+     */
     gameOfLife->setSleepTime(gameInterval->value());
 }
 

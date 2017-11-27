@@ -60,6 +60,7 @@ private:
 
 public slots:
     void paintEvent(QPaintEvent *event);
+    void evolutionChoice();
     void onStartBtnClicked();
     void onPauseBtnClicked();
     void onClearBtnClicked();
@@ -71,7 +72,6 @@ public:
     Overlay(QWidget *parent = 0);
     ~Overlay();
     void setupUI();
-    void evolutionChoice();
     void doTheSnakeThing();
     void drawField(const int dim);
 };
