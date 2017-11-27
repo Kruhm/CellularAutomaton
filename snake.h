@@ -13,7 +13,7 @@ public:
     void setPos(QPoint *pos);
     QPoint getPos();
     void setParent(snake *parent);
-    snake getParent();
+    snake* getParent();
     void evolve();
 };
 

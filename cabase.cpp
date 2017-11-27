@@ -37,9 +37,8 @@ CAbase::~CAbase()
     delete[] currentState;
     delete[] newState;
     delete ui;
-    delete timer;
-    delete tail;
-    delete head;
+    //delete tail;
+    //delete head;
 }
 
 void CAbase::paintEvent(QPaintEvent *e){
@@ -169,7 +168,12 @@ void CAbase::evolve() {
 
 void CAbase::evolveChoice(){
     if(ui->gameModes->currentText()=="Snake"){
-        tail->evolve();
+        snake* current = tail;
+        while(current->getParent()){
+            current->evolve();
+            current = current->getParent();
+        }
+        head = current;
     }else
         evolve();
 }

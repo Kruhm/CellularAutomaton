@@ -6,8 +6,8 @@ snake::snake(QPoint *pos, snake *parent=nullptr)
     this->parent = parent;
 }
 
-snake snake::getParent(){
-    return *parent;
+snake* snake::getParent(){
+    return parent;
 }
 
 void snake::evolve(){
