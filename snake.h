@@ -9,11 +9,11 @@ private:
     QPoint *pos;
     snake *parent;
 public:
-    snake(QPoint *pos, snake *parent=nullptr);
+    snake(QPoint *pos, snake *parent);
     void setPos(QPoint *pos);
     QPoint getPos();
-    void setParent(QPoint *parent);
-    QPoint getParent();
+    void setParent(snake *parent);
+    snake getParent();
 };
 
 #endif // SNAKE_H

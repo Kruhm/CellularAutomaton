@@ -7,15 +7,15 @@ snake::snake(QPoint *pos, snake *parent=nullptr)
 }
 
 snake snake::getParent(){
-    return parent;
+    return *parent;
 }
 
-void snake::setParent(QPoint *parent){
+void snake::setParent(snake *parent){
     this->parent = parent;
 }
 
 QPoint snake::getPos(){
-    return pos;
+    return *pos;
 }
 
 void snake::setPos(QPoint *pos){

@@ -14,8 +14,8 @@ CAbase::CAbase(QWidget *parent) :
     dim = ui->universeSize->value();
     originOfCs = new QPoint(10,20);
     setSize(dim,dim);
-    snake *tail(new QPoint(0,0));
-    snake *head = tail;
+    tail = new snake(new QPoint(0,0),0);
+    head = tail;
 
     // beginning the field with the glider example
     setCellState(0,0,1);

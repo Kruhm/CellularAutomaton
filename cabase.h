@@ -63,6 +63,8 @@ private:
     bool *newState = new bool[0];
     QTimer *timer;
     QPoint *originOfCs;
+    snake* tail;
+    snake* head;
 
     //PRIVATE METHODS
     bool apply_rules(int x, int y);
