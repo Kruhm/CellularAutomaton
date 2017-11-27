@@ -1,27 +1,27 @@
 #include "snake.h"
 
-snake::snake(QPoint *pos, snake *parent=nullptr)
+Snake::Snake(QPoint *pos, Snake *parent=nullptr)
 {
     this->pos = pos;
     this->parent = parent;
 }
 
-snake* snake::getParent(){
+Snake* Snake::getParent(){
     return parent;
 }
 
-void snake::evolve(){
-
+void Snake::evolve(){
+    this->pos = this->parent->pos;
 }
 
-void snake::setParent(snake *parent){
+void Snake::setParent(Snake *parent){
     this->parent = parent;
 }
 
-QPoint snake::getPos(){
+QPoint Snake::getPos(){
     return *pos;
 }
 
-void snake::setPos(QPoint *pos){
+void Snake::setPos(QPoint *pos){
     this->pos = pos;
 }

@@ -3,18 +3,19 @@
 
 #include <QPoint>
 
-class snake
+class Snake
 {
 private:
     QPoint *pos;
-    snake *parent;
+    Snake *parent;
 public:
-    snake(QPoint *pos, snake *parent);
+    Snake(QPoint *pos, Snake *parent);
+
     void setPos(QPoint *pos);
-    QPoint getPos();
-    void setParent(snake *parent);
-    snake* getParent();
+    void setParent(Snake *parent);
     void evolve();
+    QPoint getPos();
+    Snake* getParent();
 };
 
 #endif // SNAKE_H

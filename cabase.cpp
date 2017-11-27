@@ -1,131 +1,75 @@
 #include "cabase.h"
-#include "ui_cabase.h"
 
-
-CAbase::CAbase(QWidget *parent) :
-    QMainWindow(parent),
-    timer(new QTimer(this)),
-    ui(new Ui::CAbase)
-{
-    /*
-     * Conveys Game of Life
-     */
-    ui->setupUi(this);
-    dim = ui->universeSize->value();
-    originOfCs = new QPoint(10,20);
+CAbase::CAbase(const int dim,const int sleepTime, const bool doEvolution){
+    this->dim = dim;
+    this->doEvolution = doEvolution;    //used to keep thread running
+    this->sleepTime = sleepTime; //in ms
     setSize(dim,dim);
-    tail = new snake(new QPoint(0,0),0);
-    head = tail;
 
-    // beginning the field with the glider example
-    /*
+    //glider
     setCellState(0,0,1);
     setCellState(2,0,1);
     setCellState(1,1,1);
     setCellState(2,1,1);
     setCellState(1,2,1);
-    */
-    connect(timer, SIGNAL(timeout()),SLOT(evolve()));
-    timer->start(ui->intervalBox->value());
 }
 
-CAbase::~CAbase()
-{
-    /*
-     * Destroys every manual created pointer to clear the memory
-     */
+CAbase::~CAbase(){
     delete[] currentState;
     delete[] newState;
-    delete ui;
-    //delete tail;
-    //delete head;
 }
 
-void CAbase::paintEvent(QPaintEvent *e){
+void CAbase::run(){
     /*
-     * Paints the grid on the window.
+     * is called when Thread is started, kinda the new timer
      */
-    QPainter painter(this);
-    painter.setPen(Qt::white);
-    for(int i = 0; i < dim*dim; i++){
-        int posInXDir = originOfCs->x()+10*(i/dim);
-        int posInYDir = originOfCs->y()+10*(i%dim);
-        QRect rect(posInXDir,posInYDir,10,10); //
-
-        if(getCellState((i/dim),(i%dim))) // if cell is alive, fill rect black
-            painter.fillRect(rect,Qt::black);
-
-        painter.drawRect(rect);
+    while(this->doEvolution){
+        emit evolve();
+        msleep(sleepTime);  //wait the set interval before evolving again
     }
 }
 
-void CAbase::mousePressEvent(QMouseEvent* event) {
+void CAbase::evolve() {
     /*
-     * Changes the state of the clicked cell on the grid to on or off
+     * Applies the rules of the game to every instance of the field
      */
 
-    QPoint p(event->pos());              // position of mouse
-    int x = originOfCs->x();             //       x position of Grid | Grid is drawn at (10,20)
-    int y = originOfCs->y();             //       y position of Grid
-    bool isX = false;
-    bool isY = false;
-
-    // check for pos in x direction
-    if(p.x() <= originOfCs->x() + dim * 10 && p.x() >= originOfCs->x()){ // If mouseclick is in grid
-        while(x <= p.x() && x<= originOfCs->x() + dim * 10){
-            x += 10;
+    vector<vector<int>> changed;
+    for (int y = 0; y < getDim(); y++) {
+        for (int x = 0; x < getDim(); x++) {
+            bool rule_applied = apply_rules(x, y);
+            bool cellState = getCellState(x,y);
+            if((rule_applied && !cellState) || (!rule_applied && cellState)){
+                vector<int> newState = {x,y,rule_applied};
+                changed.push_back(newState);
+            }
         }
-        x -= originOfCs->x();
-        x /= 10;
-        isX = true;
     }
 
-    // check for pos in y direction
-    if(p.y() <= originOfCs->y() + dim * 10 && p.y() >= originOfCs->y()){ // If mouseclick is in grid
-        while(y <= p.y() && y <= originOfCs->y() + dim * 10){
-            y += 10;
-        }
-
-        y -= originOfCs->y();
-        y /= 10;
-        isY = true;
-    }
-
-    if(isY && isX){ // if click was truly on grid
-        setCellState(x-1,y-1,!getCellState(x-1,y-1));
-        update();
+    for(vector<int> changedCell : changed){
+        setCellState(changedCell.at(0),changedCell.at(1),changedCell.at(2));
     }
 }
 
-int CAbase::convertToOneDimension(const int x, const int y) {
-    /*
-     * Converts 2D iteration to 1D iteration
-     */
-    return ((y * getNx()) + x);
+
+void CAbase::setDoEvolution(bool doEvolution){
+    this->doEvolution = doEvolution;
 }
 
-int CAbase::getNy() {
-    return Ny;
+void CAbase::setSleepTime(int sleepTime){
+    this->sleepTime = sleepTime;
 }
 
-void CAbase::setNy(const int Ny) {
-    this->Ny = Ny;
-}
-
-int CAbase::getNx() {
-    return Nx;
-}
-
-void CAbase::setNx(const int Nx) {
-    this->Nx = Nx;
+void CAbase::setDim(const int dim) {
+    this->dim = dim;
 }
 
 void CAbase::wipe() {
     /*
      * Resets the dyn arrays, every entry set to False
      */
-    for (int y = 0; y < getNy(); y++) {
-        for (int x = 0; x < getNx(); x++) {
+    for (int y = 0; y < getDim(); y++) {
+        for (int x = 0; x < getDim(); x++) {
             setCellState(x, y, false);
             setNewCellState(x, y, false);
         }
@@ -136,53 +80,46 @@ void CAbase::setSize(const int x, const int y) {
     /*
      * resizes the dynamic arrays
      */
-    setNx(x);
-    setNy(y); //new x and y values
+    setDim(x);
     delete[] currentState;
     delete[] newState;
-    currentState = new bool[getNx() * getNy()];
-    newState = new bool[getNx() * getNy()];
+    currentState = new bool[this->dim * this->dim];
+    newState = new bool[this->dim * this->dim];
     wipe();
 }
 
-void CAbase::evolve() {
+void CAbase::setNewCellState(const int x, const int y, const bool state) {
     /*
-     * Applies the rules of the game to every instance of the field
+     * Changes one instance of the newCellState Array
      */
-
-    for (int y = 0; y < getNy(); y++) {
-        for (int x = 0; x < getNx(); x++) {
-            setNewCellState(x, y, apply_rules(x, y));
-        }
-    }
-
-    //copy new state to current state
-    for (int y = 0; y < getNy(); y++) {
-        for (int x = 0; x < getNx(); x++) {
-            setCellState(x, y, getnewCellState(x, y));
-            setNewCellState(x, y, false);
-        }
-    }
-    update();
+    int address = convertToOneDimension(x, y);
+    newState[address] = state;
 }
 
-void CAbase::evolveChoice(){
-    if(ui->gameModes->currentText()=="Snake"){
-        snake* current = tail;
-        while(current->getParent()){
-            current->evolve();
-            current = current->getParent();
-        }
-        head = current;
-    }else
-        evolve();
+void CAbase::setCellState(const int x, const int y, const bool state) {
+    /*
+     * Changes one instance of the currentCellState Array
+     */
+    int address = convertToOneDimension(x, y);
+    currentState[address] = state;
+}
+
+int CAbase::convertToOneDimension(const int x, const int y) {
+    /*
+     * Converts 2D iteration to 1D iteration
+     */
+    return ((y * getDim()) + x);
+}
+
+int CAbase::getDim() {
+    return dim;
 }
 
 bool CAbase::field_exists(const int x, const int y) {
     /*
      * Returns true if x and y is in the grids boundaries
      */
-    return (x < getNx() && x >= 0) && (y >= 0 && y < getNy());
+    return (x < getDim() && x >= 0) && (y >= 0 && y < getDim());
 }
 
 bool CAbase::apply_rules(const int x, const int y) {
@@ -215,22 +152,6 @@ bool CAbase::apply_rules(const int x, const int y) {
     }
 }
 
-void CAbase::setNewCellState(const int x, const int y, const bool state) {
-    /*
-     * Changes one instance of the newCellState Array
-     */
-    int address = convertToOneDimension(x, y);
-    newState[address] = state;
-}
-
-void CAbase::setCellState(const int x, const int y, const bool state) {
-    /*
-     * Changes one instance of the currentCellState Array
-     */
-    int address = convertToOneDimension(x, y);
-    currentState[address] = state;
-}
-
 bool CAbase::getCellState(const int x, const int y) {
     int address = convertToOneDimension(x, y);
     return currentState[address];
@@ -239,48 +160,4 @@ bool CAbase::getCellState(const int x, const int y) {
 bool CAbase::getnewCellState(const int x, const int y) {
     int address = convertToOneDimension(x, y);
     return newState[address];
-}
-
-void CAbase::on_stopButton_clicked()
-{
-    timer->stop();
-}
-
-void CAbase::on_startButton_clicked()
-{
-    int interval = ui->intervalBox->value();
-    timer->start(interval);
-}
-
-void CAbase::on_changeUniverseSizeButton_clicked()
-{
-    this->dim = ui->universeSize->value();
-    setSize(dim,dim);
-    update();
-}
-
-void CAbase::on_clearButton_clicked()
-{
-    wipe();
-    timer->stop();
-    update();
-}
-
-void CAbase::on_changeCellButton_clicked()
-{
-
-    int x = ui->xBox->value();
-    int y = ui->yBox->value();
-
-    if(field_exists(x,y)){
-        timer->stop();
-        setCellState(x,y,!getCellState(x,y));
-        update();
-    }
-}
-
-void CAbase::on_intervalBox_valueChanged(int arg1)
-{
-    timer->stop();
-    timer->start(ui->intervalBox->value());
 }
