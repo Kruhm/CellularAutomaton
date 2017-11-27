@@ -127,7 +127,7 @@ void Overlay::setupUI(){
 
     //Add game mode tabs to ComboBox
     gameMode->addItem("Game of Life");
-    gameMode->addItem("snake");
+    gameMode->addItem("Snake");
 
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);
@@ -144,7 +144,6 @@ void Overlay::setupUI(){
     menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
 
     //Adding Widgets to the main windows layout
-    menuSide->setAlignment(Qt::AlignTop);
     menuSide->addWidget(gameMode,6,0,1,3,Qt::AlignBottom); // Seventh Row
     mainLayout->addWidget(gameField);
     mainLayout->addLayout(menuSide);
