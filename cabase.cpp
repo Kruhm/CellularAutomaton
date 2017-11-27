@@ -36,6 +36,8 @@ CAbase::~CAbase()
     delete[] newState;
     delete ui;
     delete timer;
+    delete tail;
+    delete head;
 }
 
 void CAbase::paintEvent(QPaintEvent *e){
