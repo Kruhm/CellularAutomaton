@@ -192,6 +192,26 @@
      <string>y</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="gameModes">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>310</y>
+      <width>241</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Game of Life</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Snake</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -199,7 +219,7 @@
      <x>0</x>
      <y>0</y>
      <width>793</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

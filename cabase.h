@@ -71,6 +71,7 @@ private:
     void setNewCellState(int x, int y, bool state);
     bool field_exists(int x, int y);
     void wipe();
+    void evolveChoice();
     int convertToOneDimension(int x, int y);
 
 };

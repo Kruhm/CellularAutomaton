@@ -18,11 +18,13 @@ CAbase::CAbase(QWidget *parent) :
     head = tail;
 
     // beginning the field with the glider example
+    /*
     setCellState(0,0,1);
     setCellState(2,0,1);
     setCellState(1,1,1);
     setCellState(2,1,1);
     setCellState(1,2,1);
+    */
     connect(timer, SIGNAL(timeout()),SLOT(evolve()));
     timer->start(ui->intervalBox->value());
 }
@@ -148,6 +150,7 @@ void CAbase::evolve() {
     /*
      * Applies the rules of the game to every instance of the field
      */
+
     for (int y = 0; y < getNy(); y++) {
         for (int x = 0; x < getNx(); x++) {
             setNewCellState(x, y, apply_rules(x, y));
@@ -162,6 +165,13 @@ void CAbase::evolve() {
         }
     }
     update();
+}
+
+void CAbase::evolveChoice(){
+    if(ui->gameModes->currentText()=="Snake"){
+        tail->evolve();
+    }else
+        evolve();
 }
 
 bool CAbase::field_exists(const int x, const int y) {

@@ -14,6 +14,7 @@ public:
     QPoint getPos();
     void setParent(snake *parent);
     snake getParent();
+    void evolve();
 };
 
 #endif // SNAKE_H
