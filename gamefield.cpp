@@ -1,7 +1,8 @@
 #include "gamefield.h"
 
-GameField::GameField(QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(CAbase* gol, QGraphicsView *parent): QGraphicsView(parent){
     field = new QGraphicsScene(this);
+    gameOfLife = gol;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::black);
@@ -55,5 +56,9 @@ void GameField::mousePressEvent(QMouseEvent *e){
      */
     QPoint origin = mapFromGlobal(QCursor::pos());
     QPointF relativeOrigin = mapToScene(origin);
-    qDebug() << "x: " << int(relativeOrigin.x()/10) << " y: " << int(relativeOrigin.y()/10);
+    int x = relativeOrigin.x()/10;
+    int y = relativeOrigin.y()/10;
+    bool state = this->gameOfLife->getCellState(x,y);
+    this->gameOfLife->setCellState(x,y,!state);
+    //qDebug() << "x: " << int(relativeOrigin.x()/10) << " y: " << int(relativeOrigin.y()/10);
 }

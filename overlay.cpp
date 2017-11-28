@@ -14,8 +14,12 @@ Overlay::Overlay(QWidget *parent): QWidget(parent){
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
-    gameField = new GameField();
 
+    gameOfLife = new CAbase(50,500,true);
+    snakeTail = new Snake(new QPoint(0,0),0);
+    snakeHead = snakeTail;
+
+    gameField = new GameField(gameOfLife);
 
     //setup UI
     this->setupUI();
@@ -31,9 +35,7 @@ Overlay::Overlay(QWidget *parent): QWidget(parent){
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     //creating the games
-    gameOfLife = new CAbase(universeSize->value(),gameInterval->value(),true);
-    snakeTail = new Snake(new QPoint(0,0),0);
-    snakeHead = snakeTail;
+
 }
 
 Overlay::~Overlay(){
@@ -66,7 +68,7 @@ void Overlay::paintEvent(QPaintEvent *event){
     gameField->clear();
     int dim = universeSize->value();
     for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
-        gameField->drawFieldCell(i/dim,i%dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
+        gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
     }
     gameField->showField(); // make board visible
 }

@@ -1,6 +1,7 @@
 #ifndef GAMEFIELD_H
 #define GAMEFIELD_H
 
+#include "cabase.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -15,11 +16,12 @@ class GameField : public QGraphicsView{
 
 private:
     QGraphicsScene* field;
+    CAbase* gameOfLife;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
 public:
-    GameField(QGraphicsView *parent = 0);
+    GameField(CAbase* gol, QGraphicsView *parent = 0);
     ~GameField();
     void drawFieldCell(int x,int y, int rectSize, bool cellState);
     void clear();
