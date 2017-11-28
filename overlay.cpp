@@ -89,7 +89,6 @@ void Overlay::onStartBtnClicked(){
     /*
      * Starts the GameOfLife Thread with the given interval
      */
-    gameOfLife->setStackSize(gameInterval->value());
     gameOfLife->setDoEvolution(true);
     gameOfLife->start();
 }
@@ -113,8 +112,7 @@ void Overlay::onChangeBtnClicked(){
     /*
      * Wipes the board and changes the universe size
      */
-    int newDim = universeSize->value();
-    gameOfLife->setSize(newDim,newDim);
+    gameOfLife->setSize(universeSize->value());
     update();
 }
 
@@ -122,8 +120,7 @@ void Overlay::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
      */
-    int dim = universeSize->value();
-    gameOfLife->setSize(dim,dim);
+    gameOfLife->setSize(universeSize->value());
     update();
 }
 
@@ -147,7 +144,7 @@ void Overlay::setupUI(){
 
     //set boundaries of SpinBoxes
     gameInterval->setMaximum(10000);
-    universeSize->setMaximum(50);
+    universeSize->setMaximum(100);
     gameInterval->setMinimum(100);
     universeSize->setMinimum(1);
     gameInterval->setSingleStep(50);

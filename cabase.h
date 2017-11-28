@@ -22,7 +22,7 @@ public:
     void run();
     void wipe();
     void setDim(int dim);
-    void setSize(int x, int y);
+    void setSize(int dim);
     void setDoEvolution(bool doIt);
     void setSleepTime(int sleepTime);
     void setCellState(int x, int y, bool state);

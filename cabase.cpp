@@ -4,7 +4,7 @@ CAbase::CAbase(const int dim,const int sleepTime, const bool doEvolution){
     this->dim = dim;
     this->doEvolution = doEvolution;    //used to keep thread running
     this->sleepTime = sleepTime; //in ms
-    setSize(dim,dim);
+    setSize(dim);
 
     //glider
     setCellState(0,0,1);
@@ -76,15 +76,15 @@ void CAbase::wipe() {
     }
 }
 
-void CAbase::setSize(const int x, const int y) {
+void CAbase::setSize(const int dim) {
     /*
      * resizes the dynamic arrays
      */
-    setDim(x);
+    setDim(dim);
     delete[] currentState;
     delete[] newState;
-    currentState = new bool[this->dim * this->dim];
-    newState = new bool[this->dim * this->dim];
+    currentState = new bool[dim * dim];
+    newState = new bool[dim * dim];
     wipe();
 }
 
