@@ -1,7 +1,7 @@
 #include "cabase.h"
 
 CAbase::CAbase(QWidget *parent): QWidget(parent){
-    //Initialize Attributes
+    //Initialize Attributesses
     timer = new QTimer(this);
     mainLayout = new QHBoxLayout(this);
     menuSide = new QGridLayout(this);

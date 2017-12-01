@@ -27,7 +27,7 @@ class CAbase : public QWidget
 private:
     QTimer *timer;
 
-    //Games
+    //Gamesses
     GameOfLife* gameOfLife;
     Snake* snakeTail;
     Snake* snakeHead;
