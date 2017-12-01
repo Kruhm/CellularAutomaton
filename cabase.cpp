@@ -15,7 +15,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
 
-    gameOfLife = new GameOfLife(50,500,true); // universeSize, intervall, doEvolution
+    gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),0))); // create snake with 3 body parts
     // get to the snake head
     Snake* current = snakeTail;
@@ -25,7 +25,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     snakeHead = current;    // Remember the last element of the list
     delete current;
 
-    gameField = new GameField(gameOfLife);
+    gameField = new GameField(gameOfLife,snakeTail);
 
     //setup UI
     this->setupUI();
@@ -73,10 +73,14 @@ void CAbase::paintEvent(QPaintEvent *event){
      */
     gameField->clear();
     int dim = universeSize->value();
-    for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
-        gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
+    if(gameMode->currentText()=="Snake"){
+        gameField->drawSnakeField(dim);
+    }else{
+        for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
+            gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
+        }
     }
-    gameField->showField(); // make board visible
+     gameField->showField(); // make board visible
 }
 
 void CAbase::doTheSnakeThing(){

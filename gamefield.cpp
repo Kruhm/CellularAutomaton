@@ -1,8 +1,9 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol,Snake* snakeTail, QGraphicsView *parent): QGraphicsView(parent){
     field = new QGraphicsScene(this);
-    gameOfLife = gol;
+    this->gameOfLife = gol;
+    this->snakeTail = snakeTail;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::black);
@@ -16,6 +17,43 @@ GameField::~GameField(){
     delete pen;
     delete bgBrush;
     delete brush;
+}
+
+void GameField::drawSnakeField(const int fieldSize){
+    field->setBackgroundBrush(*bgBrush);    // Make the background grey
+    int rectSize = 10;
+    for(int y = 0; y < fieldSize;y++){
+        for(int x = 0; x < fieldSize;x++){
+            QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
+            bool isInSnake = false;
+            Snake* current = snakeTail;
+            while(current->getParent()){
+                QPoint pos = current->getPos();
+                if(pos.x() == x && pos.y() == y){
+                    isInSnake = true;
+                    break;
+                }
+            }
+            if(isInSnake){
+                brush->setColor(Qt::green);
+                this->field->addRect(rect,*pen,*brush);
+            }else{
+                brush->setColor(Qt::white);
+                this->field->addRect(rect,*pen,*brush); //add rect to the scene
+            }
+        }
+    }
+
+
+
+    /*
+    if(cellState){ // if cell is alive, fill rect blue
+        brush->setColor(Qt::blue);
+        this->field->addRect(rect,*pen,*brush);
+    }else{  // otherwise cell is dead, fill rect white
+        brush->setColor(Qt::white);
+        this->field->addRect(rect,*pen,*brush); //add rect to the scene
+    }*/
 }
 
 void GameField::clear(){
