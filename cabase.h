@@ -1,41 +1,79 @@
-#ifndef CABASE_H
-#define CABASE_H
+#ifndef GAMEWIDGET_H
+#define GAMEWIDGET_H
 
 #include <QThread>
-#include <QDebug>
-#include <vector>
+#include <QtCore>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QPoint>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QTimer>
 
-using namespace std;
-class CAbase : public QThread{
+#include "snake.h"
+#include "cabase.h"
+#include "gamefield.h"
+
+class Overlay : public QWidget
+{
+    Q_OBJECT
+
+
 private:
-    //ATTRIBUTES
-    int dim;
-    int sleepTime;
-    bool doEvolution;
-    bool* currentState = new bool[0];
-    bool* newState = new bool[0];
+    QTimer *timer;
+
+    //Games
+    CAbase* gameOfLife;
+    Snake* snakeTail;
+    Snake* snakeHead;
+
+    //Layouts
+    QHBoxLayout* mainLayout;
+    QGridLayout* menuSide;
+
+    //Labels
+    QLabel* universeSizeLbl;
+    QLabel* gameIntervalLbl;
+
+    //SpinBoxes
+    QSpinBox* universeSize;
+    QSpinBox* gameInterval;
+
+    //ComboBox
+    QComboBox* gameMode;
+
+    //Buttons
+    QPushButton* startBtn;
+    QPushButton* stopBtn;
+    QPushButton* clearBtn;
+    QPushButton* changeSizeBtn;
+
+    //gameField
+    GameField* gameField;
+
+    void test();
+
+public slots:
+    void paintEvent(QPaintEvent *event);
+    void evolutionChoice();
+    void onStartBtnClicked();
+    void onPauseBtnClicked();
+    void onClearBtnClicked();
+    void onChangeBtnClicked();
+    void onUniverseSizeChanged();
+    void onIntervalValueChanged();
 
 public:
-    explicit CAbase(int dim, int sleepTime, bool doEvolution);
-    ~CAbase();
-
-    void run();
-    void wipe();
-    void setDim(int dim);
-    void setSize(int dim);
-    void setDoEvolution(bool doIt);
-    void setSleepTime(int sleepTime);
-    void setCellState(int x, int y, bool state);
-    void setNewCellState(int x, int y, bool state);
-    int getDim();
-    int convertToOneDimension(int x, int y);
-    bool apply_rules(int x, int y);
-    bool field_exists(int x, int y);
-    bool getCellState(int x, int y);
-    bool getnewCellState(int x, int y);
-
-signals:
-    void evolve();
+    Overlay(QWidget *parent = 0);
+    ~Overlay();
+    void setupUI();
+    void doTheSnakeThing();
+    void drawField(const int dim);
 };
 
-#endif // CABASE_H
+#endif // GAMEWIDGET_H

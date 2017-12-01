@@ -1,163 +1,191 @@
-#include "cabase.h"
+#include "overlay.h"
 
-CAbase::CAbase(const int dim,const int sleepTime, const bool doEvolution){
-    this->dim = dim;
-    this->doEvolution = doEvolution;    //used to keep thread running
-    this->sleepTime = sleepTime; //in ms
-    setSize(dim);
+Overlay::Overlay(QWidget *parent): QWidget(parent){
+    //Initialize Attributes
+    timer = new QTimer(this);
+    mainLayout = new QHBoxLayout(this);
+    menuSide = new QGridLayout(this);
+    universeSizeLbl = new QLabel(this);
+    gameIntervalLbl = new QLabel(this);
+    universeSize = new QSpinBox(this);
+    gameInterval = new QSpinBox(this);
+    gameMode = new QComboBox(this);
+    startBtn = new QPushButton(this);
+    stopBtn = new QPushButton(this);
+    clearBtn = new QPushButton(this);
+    changeSizeBtn = new QPushButton(this);
 
-    //glider
-    setCellState(0,0,1);
-    setCellState(2,0,1);
-    setCellState(1,1,1);
-    setCellState(2,1,1);
-    setCellState(1,2,1);
+    gameOfLife = new CAbase(50,500,true);
+    snakeTail = new Snake(new QPoint(0,0),0);
+    snakeHead = snakeTail;
+
+    gameField = new GameField(gameOfLife);
+
+    //setup UI
+    this->setupUI();
+    timer->start(50);
+
+    //Connect Objects with SLOTS
+    connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
+    connect(stopBtn,SIGNAL(clicked()),this,SLOT(onPauseBtnClicked()));
+    connect(clearBtn,SIGNAL(clicked()),this,SLOT(onClearBtnClicked()));
+    connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
+    connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
+    connect(changeSizeBtn,SIGNAL(clicked()),this,SLOT(onChangeBtnClicked()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
+
+    //creating the games
+
 }
 
-CAbase::~CAbase(){
-    delete[] currentState;
-    delete[] newState;
-}
-
-void CAbase::run(){
+Overlay::~Overlay(){
     /*
-     * is called when Thread is started, kinda the new timer
+     * destroy every not otherwise destroyed pointer
      */
-    while(this->doEvolution){
-        emit evolve();
-        msleep(sleepTime);  //wait the set interval before evolving again
-    }
+    delete gameField;
 }
 
-void CAbase::evolve() {
+void Overlay::evolutionChoice(){
     /*
-     * Applies the rules of the game to every instance of the field
+     *  decides which game should be progressing, based on the game mode SpinBox
      */
-
-    vector<vector<int>> changed;
-    for (int y = 0; y < getDim(); y++) {
-        for (int x = 0; x < getDim(); x++) {
-            bool rule_applied = apply_rules(x, y);
-            bool cellState = getCellState(x,y);
-            if((rule_applied && !cellState) || (!rule_applied && cellState)){
-                vector<int> newState = {x,y,rule_applied};
-                changed.push_back(newState);
-            }
+    update();
+    if(gameMode->currentText()=="Snake"){
+        this->doTheSnakeThing();
+    }else{
+        if(!gameOfLife->isRunning()){   // if the thread isn't currently running
+            gameOfLife->start();    // start the GoL thread
         }
     }
 
-    for(vector<int> changedCell : changed){
-        setCellState(changedCell.at(0),changedCell.at(1),changedCell.at(2));
+}
+
+void Overlay::paintEvent(QPaintEvent *event){
+    /*
+     * Draws the grid on the left side of the Window.
+     * Currently only for Game of Life, Blue is an alive cell, White is a dead cell
+     */
+    gameField->clear();
+    int dim = universeSize->value();
+    for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
+        gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
     }
+    gameField->showField(); // make board visible
 }
 
-
-void CAbase::setDoEvolution(bool doEvolution){
-    this->doEvolution = doEvolution;
-}
-
-void CAbase::setSleepTime(int sleepTime){
-    this->sleepTime = sleepTime;
-}
-
-void CAbase::setDim(const int dim) {
-    this->dim = dim;
-}
-
-void CAbase::wipe() {
+void Overlay::doTheSnakeThing(){
     /*
-     * Resets the dyn arrays, every entry set to False
+     * Moves the snake in a given direction specified by a KeyPress
      */
-    for (int y = 0; y < getDim(); y++) {
-        for (int x = 0; x < getDim(); x++) {
-            setCellState(x, y, false);
-            setNewCellState(x, y, false);
-        }
+    Snake* current = snakeTail;
+    while(current->getParent()){ // As long as the current SnakePart has a Parent
+        current->evolve();      // Move BodyPart
+        current = current->getParent(); // go to the next BodyPart
     }
+    snakeHead = current;    // Remember the last element of the list
 }
 
-void CAbase::setSize(const int dim) {
+void Overlay::onStartBtnClicked(){
     /*
-     * resizes the dynamic arrays
+     * Starts the GameOfLife Thread with the given interval
      */
-    setDim(dim);
-    delete[] currentState;
-    delete[] newState;
-    currentState = new bool[dim * dim];
-    newState = new bool[dim * dim];
-    wipe();
+    gameOfLife->setDoEvolution(true);
+    gameOfLife->start();
 }
 
-void CAbase::setNewCellState(const int x, const int y, const bool state) {
+void Overlay::onPauseBtnClicked(){
     /*
-     * Changes one instance of the newCellState Array
+     * Stops the currently running GameOfLife Thread
      */
-    int address = convertToOneDimension(x, y);
-    newState[address] = state;
+    gameOfLife->setDoEvolution(false);
 }
 
-void CAbase::setCellState(const int x, const int y, const bool state) {
+void Overlay::onClearBtnClicked(){
     /*
-     * Changes one instance of the currentCellState Array
+     * Wipes the Board of every living cell
      */
-    int address = convertToOneDimension(x, y);
-    currentState[address] = state;
+    gameOfLife->wipe();
+    update();
 }
 
-int CAbase::convertToOneDimension(const int x, const int y) {
+void Overlay::onChangeBtnClicked(){
     /*
-     * Converts 2D iteration to 1D iteration
+     * Wipes the board and changes the universe size
      */
-    return ((y * getDim()) + x);
+    gameOfLife->setSize(universeSize->value());
+    update();
 }
 
-int CAbase::getDim() {
-    return dim;
-}
-
-bool CAbase::field_exists(const int x, const int y) {
+void Overlay::onUniverseSizeChanged(){
     /*
-     * Returns true if x and y is in the grids boundaries
+     * Wipes the board and changes the universe size
      */
-    return (x < getDim() && x >= 0) && (y >= 0 && y < getDim());
+    gameOfLife->setSize(universeSize->value());
+    update();
 }
 
-bool CAbase::apply_rules(const int x, const int y) {
+void Overlay::onIntervalValueChanged(){
     /*
-     * Checks for a given instance, if any rule has to be applied
+     * changes the refresh rate of the evolution done by the GameOfLife object
      */
-    int up = (y - 1);
-    int down = (y + 1);
-    int left = (x - 1);
-    int right = (x + 1);
-
-    int amountOfNeighbours = 0;
-
-    //checks if surrounding cell exist and is alive
-    if (field_exists(left, up) && getCellState(left, up)) { amountOfNeighbours++; }     // dia left up
-    if (field_exists(left, down) && getCellState(left, down)) { amountOfNeighbours++; }  // dia left down
-    if (field_exists(right, down) && getCellState(right, down)) { amountOfNeighbours++; } // dia right down
-    if (field_exists(right, up) && getCellState(right, up)) { amountOfNeighbours++; }    // dia right up
-    if (field_exists(left, y) && getCellState(left, y)) { amountOfNeighbours++; }        // left
-    if (field_exists(right, y) && getCellState(right, y)) { amountOfNeighbours++; }       // right
-    if (field_exists(x, up) && getCellState(x, up)) { amountOfNeighbours++; }          // up
-    if (field_exists(x, down) && getCellState(x, down)) { amountOfNeighbours++; }       // down
-
-    if (amountOfNeighbours > 3 || amountOfNeighbours < 2) { // not enough or too many neighbors
-        return false;
-    } else if (getCellState(x, y) && (amountOfNeighbours == 2 || amountOfNeighbours == 3)) { // 2 or 3 neighbors to stay alive
-        return true;
-    } else if (!getCellState(x, y) && amountOfNeighbours == 3) { // 3 neighbors reproduced
-        return true;
-    }
+    gameOfLife->setSleepTime(gameInterval->value());
 }
 
-bool CAbase::getCellState(const int x, const int y) {
-    int address = convertToOneDimension(x, y);
-    return currentState[address];
-}
+void Overlay::setupUI(){
+    //Give buttons text
+    startBtn->setText("start");
+    stopBtn->setText("pause");
+    clearBtn->setText("clear");
+    changeSizeBtn->setText("change");
 
-bool CAbase::getnewCellState(const int x, const int y) {
-    int address = convertToOneDimension(x, y);
-    return newState[address];
+    //Give labels text
+    universeSizeLbl->setText("Universe Size  (1 - 50)");
+    gameIntervalLbl->setText("Generation Interval (100-10000)");
+
+    //set boundaries of SpinBoxes
+    gameInterval->setMaximum(10000);
+    universeSize->setMaximum(100);
+    gameInterval->setMinimum(100);
+    universeSize->setMinimum(1);
+    gameInterval->setSingleStep(50);
+
+    //set SpinBoxes suffixes
+    universeSize->setSuffix(" cells");
+    gameInterval->setSuffix(" ms");
+
+    //set SpinBoxes initial Values
+    universeSize->setValue(50);
+    gameInterval->setValue(500);
+
+    //Add game mode tabs to ComboBox
+    gameMode->addItem("Game of Life");
+    gameMode->addItem("Snake");
+
+    //Remove vertical spacing of the labels
+    universeSizeLbl->setFixedHeight(10);
+    gameIntervalLbl->setFixedHeight(10);
+
+    //Adding widgets to the right side of the window
+    menuSide->addWidget(startBtn,0,0); //addWidget(widget,row,column,rowspan,columnspan,alignment) | First Row
+    menuSide->addWidget(stopBtn,0,1);
+    menuSide->addWidget(clearBtn,0,2);
+    menuSide->addWidget(universeSizeLbl,1,0,1,3); // Second Row
+    menuSide->addWidget(universeSize,2,0,1,3); //Third Row
+    menuSide->addWidget(changeSizeBtn,3,2);    //Fourth Row
+    menuSide->addWidget(gameIntervalLbl,4,0,1,2); //Fifth Row
+    menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
+
+    //Adding Widgets to the main windows layout
+    menuSide->addWidget(gameMode,6,0,1,3,Qt::AlignBottom); // Seventh Row
+    mainLayout->addWidget(gameField);
+    mainLayout->addLayout(menuSide);
+    mainLayout->setAlignment(Qt::AlignTop);
+
+    //setting Layout of Window
+    this->setLayout(mainLayout);
+
+    //start the initial timer
+
+    //set size of window
+    this->resize(800,550);
 }
