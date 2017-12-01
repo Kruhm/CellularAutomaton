@@ -21,6 +21,7 @@ public:
 
     void run();
     void wipe();
+    void createGlider();
     void setDim(int dim);
     void setSize(int dim);
     void setDoEvolution(bool doEvolution);

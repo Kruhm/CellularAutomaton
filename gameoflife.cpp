@@ -5,7 +5,10 @@ GameOfLife::GameOfLife(const int dim,const int sleepTime, const bool doEvolution
     this->doEvolution = doEvolution;    //used to keep thread running
     this->sleepTime = sleepTime; //in ms
     setSize(dim);
+    createGlider();
+}
 
+void GameOfLife::createGlider(){
     //glider
     setCellState(0,0,1);
     setCellState(2,0,1);
