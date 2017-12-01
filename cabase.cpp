@@ -16,15 +16,13 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     changeSizeBtn = new QPushButton(this);
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
-    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),0))); // create snake with 3 body parts
+    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
     // get to the snake head
-    Snake* current = snakeTail;
-    while(current->getParent()){ // As long as the current SnakePart has a Parent
-        current = current->getParent(); // go to the next BodyPart
+    snakeHead = snakeTail;
+    while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent
+        snakeHead = snakeHead->getParent(); // go to the next BodyPart
     }
-    snakeHead = current;    // Remember the last element of the list
-    delete current;
-
+    qDebug() << snakeHead->getPos();
     gameField = new GameField(gameOfLife,snakeTail);
 
     //setup UI
@@ -57,7 +55,7 @@ void CAbase::evolutionChoice(){
      */
     update();
     if(gameMode->currentText()=="Snake"){
-        this->doTheSnakeThing();
+        //this->doTheSnakeThing();
     }else{
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
@@ -74,7 +72,7 @@ void CAbase::paintEvent(QPaintEvent *event){
     gameField->clear();
     int dim = universeSize->value();
     if(gameMode->currentText()=="Snake"){
-        gameField->drawSnakeField(dim);
+        gameField->drawSnakeField(dim,snakeTail);
     }else{
         for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
             gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board

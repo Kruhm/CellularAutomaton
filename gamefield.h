@@ -18,14 +18,13 @@ class GameField : public QGraphicsView{
 private:
     QGraphicsScene* field;
     GameOfLife* gameOfLife;
-    Snake* snakeTail;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
 public:
     GameField(GameOfLife* gol, Snake* snakeTail, QGraphicsView *parent = 0);
     ~GameField();
-    void drawSnakeField(int gameSize);
+    void drawSnakeField(int gameSize, Snake* snakeTail);
     void drawFieldCell(int x,int y, int rectSize, bool cellState);
     void clear();
     void showField();

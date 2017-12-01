@@ -3,7 +3,6 @@
 GameField::GameField(GameOfLife* gol,Snake* snakeTail, QGraphicsView *parent): QGraphicsView(parent){
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
-    this->snakeTail = snakeTail;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::black);
@@ -19,21 +18,29 @@ GameField::~GameField(){
     delete brush;
 }
 
-void GameField::drawSnakeField(const int fieldSize){
+void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     int rectSize = 10;
+    Snake* current = snakeTail;
+    //qDebug() << snakeTail;
+    //qDebug() << snakeTail->getParent()->getPos();
+    qDebug() << snakeTail->getParent()->getParent()->getPos();
+    //qDebug() << snakeTail->getParent()->getParent()->getParent();
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
             bool isInSnake = false;
-            Snake* current = snakeTail;
-            while(current->getParent()){
+
+            //bool test = current->getParent()->getParent()->getParent();
+            //qDebug() <<  current->getParent()->getParent()->getPos();
+            /*while(current->getParent()->getParent()->getParent()){
                 QPoint pos = current->getPos();
                 if(pos.x() == x && pos.y() == y){
                     isInSnake = true;
                     break;
                 }
-            }
+                current = current->getParent();
+            }*/
             if(isInSnake){
                 brush->setColor(Qt::green);
                 this->field->addRect(rect,*pen,*brush);
