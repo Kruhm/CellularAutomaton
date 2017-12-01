@@ -11,7 +11,7 @@ GameOfLife::GameOfLife(const int dim,const int sleepTime, const bool doEvolution
     setCellState(2,0,1);
     setCellState(1,1,1);
     setCellState(2,1,1);
-    setCellState(1,2,1);
+    setCellState(1,2,1); //
 }
 
 GameOfLife::~GameOfLife(){
