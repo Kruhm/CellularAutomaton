@@ -16,10 +16,10 @@
 #include <QTimer>
 
 #include "snake.h"
-#include "cabase.h"
+#include "gameoflife.h"
 #include "gamefield.h"
 
-class Overlay : public QWidget
+class CAbase : public QWidget
 {
     Q_OBJECT
 
@@ -28,7 +28,7 @@ private:
     QTimer *timer;
 
     //Games
-    CAbase* gameOfLife;
+    GameOfLife* gameOfLife;
     Snake* snakeTail;
     Snake* snakeHead;
 
@@ -69,8 +69,8 @@ public slots:
     void onIntervalValueChanged();
 
 public:
-    Overlay(QWidget *parent = 0);
-    ~Overlay();
+    CAbase(QWidget *parent = 0);
+    ~CAbase();
     void setupUI();
     void doTheSnakeThing();
     void drawField(const int dim);

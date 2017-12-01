@@ -6,7 +6,7 @@
 #include <vector>
 
 using namespace std;
-class CAbase : public QThread{
+class GameOfLife : public QThread{
 private:
     //ATTRIBUTES
     int dim;
@@ -16,14 +16,14 @@ private:
     bool* newState = new bool[0];
 
 public:
-    explicit CAbase(int dim, int sleepTime, bool doEvolution);
-    ~CAbase();
+    explicit GameOfLife(int dim, int sleepTime, bool doEvolution);
+    ~GameOfLife();
 
     void run();
     void wipe();
     void setDim(int dim);
     void setSize(int dim);
-    void setDoEvolution(bool doIt);
+    void setDoEvolution(bool doEvolution);
     void setSleepTime(int sleepTime);
     void setCellState(int x, int y, bool state);
     void setNewCellState(int x, int y, bool state);

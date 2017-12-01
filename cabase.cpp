@@ -1,6 +1,6 @@
-#include "overlay.h"
+#include "cabase.h"
 
-Overlay::Overlay(QWidget *parent): QWidget(parent){
+CAbase::CAbase(QWidget *parent): QWidget(parent){
     //Initialize Attributes
     timer = new QTimer(this);
     mainLayout = new QHBoxLayout(this);
@@ -15,7 +15,7 @@ Overlay::Overlay(QWidget *parent): QWidget(parent){
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
 
-    gameOfLife = new CAbase(50,500,true);
+    gameOfLife = new GameOfLife(50,500,true);
     snakeTail = new Snake(new QPoint(0,0),0);
     snakeHead = snakeTail;
 
@@ -38,14 +38,14 @@ Overlay::Overlay(QWidget *parent): QWidget(parent){
 
 }
 
-Overlay::~Overlay(){
+CAbase::~CAbase(){
     /*
      * destroy every not otherwise destroyed pointer
      */
     delete gameField;
 }
 
-void Overlay::evolutionChoice(){
+void CAbase::evolutionChoice(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
      */
@@ -60,7 +60,7 @@ void Overlay::evolutionChoice(){
 
 }
 
-void Overlay::paintEvent(QPaintEvent *event){
+void CAbase::paintEvent(QPaintEvent *event){
     /*
      * Draws the grid on the left side of the Window.
      * Currently only for Game of Life, Blue is an alive cell, White is a dead cell
@@ -73,7 +73,7 @@ void Overlay::paintEvent(QPaintEvent *event){
     gameField->showField(); // make board visible
 }
 
-void Overlay::doTheSnakeThing(){
+void CAbase::doTheSnakeThing(){
     /*
      * Moves the snake in a given direction specified by a KeyPress
      */
@@ -85,7 +85,7 @@ void Overlay::doTheSnakeThing(){
     snakeHead = current;    // Remember the last element of the list
 }
 
-void Overlay::onStartBtnClicked(){
+void CAbase::onStartBtnClicked(){
     /*
      * Starts the GameOfLife Thread with the given interval
      */
@@ -93,14 +93,14 @@ void Overlay::onStartBtnClicked(){
     gameOfLife->start();
 }
 
-void Overlay::onPauseBtnClicked(){
+void CAbase::onPauseBtnClicked(){
     /*
      * Stops the currently running GameOfLife Thread
      */
     gameOfLife->setDoEvolution(false);
 }
 
-void Overlay::onClearBtnClicked(){
+void CAbase::onClearBtnClicked(){
     /*
      * Wipes the Board of every living cell
      */
@@ -108,7 +108,7 @@ void Overlay::onClearBtnClicked(){
     update();
 }
 
-void Overlay::onChangeBtnClicked(){
+void CAbase::onChangeBtnClicked(){
     /*
      * Wipes the board and changes the universe size
      */
@@ -116,7 +116,7 @@ void Overlay::onChangeBtnClicked(){
     update();
 }
 
-void Overlay::onUniverseSizeChanged(){
+void CAbase::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
      */
@@ -124,14 +124,14 @@ void Overlay::onUniverseSizeChanged(){
     update();
 }
 
-void Overlay::onIntervalValueChanged(){
+void CAbase::onIntervalValueChanged(){
     /*
      * changes the refresh rate of the evolution done by the GameOfLife object
      */
     gameOfLife->setSleepTime(gameInterval->value());
 }
 
-void Overlay::setupUI(){
+void CAbase::setupUI(){
     //Give buttons text
     startBtn->setText("start");
     stopBtn->setText("pause");

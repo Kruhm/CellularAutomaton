@@ -1,6 +1,6 @@
-#include "cabase.h"
+#include "gameoflife.h"
 
-CAbase::CAbase(const int dim,const int sleepTime, const bool doEvolution){
+GameOfLife::GameOfLife(const int dim,const int sleepTime, const bool doEvolution){
     this->dim = dim;
     this->doEvolution = doEvolution;    //used to keep thread running
     this->sleepTime = sleepTime; //in ms
@@ -14,12 +14,12 @@ CAbase::CAbase(const int dim,const int sleepTime, const bool doEvolution){
     setCellState(1,2,1);
 }
 
-CAbase::~CAbase(){
+GameOfLife::~GameOfLife(){
     delete[] currentState;
     delete[] newState;
 }
 
-void CAbase::run(){
+void GameOfLife::run(){
     /*
      * is called when Thread is started, kinda the new timer
      */
@@ -29,7 +29,7 @@ void CAbase::run(){
     }
 }
 
-void CAbase::evolve() {
+void GameOfLife::evolve() {
     /*
      * Applies the rules of the game to every instance of the field
      */
@@ -52,19 +52,19 @@ void CAbase::evolve() {
 }
 
 
-void CAbase::setDoEvolution(bool doEvolution){
+void GameOfLife::setDoEvolution(bool doEvolution){
     this->doEvolution = doEvolution;
 }
 
-void CAbase::setSleepTime(int sleepTime){
+void GameOfLife::setSleepTime(int sleepTime){
     this->sleepTime = sleepTime;
 }
 
-void CAbase::setDim(const int dim) {
+void GameOfLife::setDim(const int dim) {
     this->dim = dim;
 }
 
-void CAbase::wipe() {
+void GameOfLife::wipe() {
     /*
      * Resets the dyn arrays, every entry set to False
      */
@@ -76,7 +76,7 @@ void CAbase::wipe() {
     }
 }
 
-void CAbase::setSize(const int dim) {
+void GameOfLife::setSize(const int dim) {
     /*
      * resizes the dynamic arrays
      */
@@ -88,7 +88,7 @@ void CAbase::setSize(const int dim) {
     wipe();
 }
 
-void CAbase::setNewCellState(const int x, const int y, const bool state) {
+void GameOfLife::setNewCellState(const int x, const int y, const bool state) {
     /*
      * Changes one instance of the newCellState Array
      */
@@ -96,7 +96,7 @@ void CAbase::setNewCellState(const int x, const int y, const bool state) {
     newState[address] = state;
 }
 
-void CAbase::setCellState(const int x, const int y, const bool state) {
+void GameOfLife::setCellState(const int x, const int y, const bool state) {
     /*
      * Changes one instance of the currentCellState Array
      */
@@ -104,25 +104,25 @@ void CAbase::setCellState(const int x, const int y, const bool state) {
     currentState[address] = state;
 }
 
-int CAbase::convertToOneDimension(const int x, const int y) {
+int GameOfLife::convertToOneDimension(const int x, const int y) {
     /*
      * Converts 2D iteration to 1D iteration
      */
     return ((y * getDim()) + x);
 }
 
-int CAbase::getDim() {
+int GameOfLife::getDim() {
     return dim;
 }
 
-bool CAbase::field_exists(const int x, const int y) {
+bool GameOfLife::field_exists(const int x, const int y) {
     /*
      * Returns true if x and y is in the grids boundaries
      */
     return (x < getDim() && x >= 0) && (y >= 0 && y < getDim());
 }
 
-bool CAbase::apply_rules(const int x, const int y) {
+bool GameOfLife::apply_rules(const int x, const int y) {
     /*
      * Checks for a given instance, if any rule has to be applied
      */
@@ -152,12 +152,12 @@ bool CAbase::apply_rules(const int x, const int y) {
     }
 }
 
-bool CAbase::getCellState(const int x, const int y) {
+bool GameOfLife::getCellState(const int x, const int y) {
     int address = convertToOneDimension(x, y);
     return currentState[address];
 }
 
-bool CAbase::getnewCellState(const int x, const int y) {
+bool GameOfLife::getnewCellState(const int x, const int y) {
     int address = convertToOneDimension(x, y);
     return newState[address];
 }
