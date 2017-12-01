@@ -15,9 +15,15 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
 
-    gameOfLife = new GameOfLife(50,500,true);
-    snakeTail = new Snake(new QPoint(0,0),0);
-    snakeHead = snakeTail;
+    gameOfLife = new GameOfLife(50,500,true); // universeSize, intervall, doEvolution
+    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),0))); // create snake with 3 body parts
+    // get to the snake head
+    Snake* current = snakeTail;
+    while(current->getParent()){ // As long as the current SnakePart has a Parent
+        current = current->getParent(); // go to the next BodyPart
+    }
+    snakeHead = current;    // Remember the last element of the list
+    delete current;
 
     gameField = new GameField(gameOfLife);
 
