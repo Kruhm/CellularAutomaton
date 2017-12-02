@@ -51,6 +51,33 @@ CAbase::~CAbase(){
     delete gameField;
 }
 
+void CAbase::eatFood(){
+    QPoint headPos = snakeHead->getPos();
+    bool isEating = false;
+    if(snakeDirection == 2){
+        if(headPos.x() == food->x() && headPos.y()+1 == food->y()){
+            isEating = true;
+        }
+    }else if(snakeDirection == 4){
+        if(headPos.x()-1 == food->x() && headPos.y() == food->y()){
+            isEating = true;
+        }
+    }else if(snakeDirection == 6){
+        if(headPos.x()+1 == food->x() && headPos.y() == food->y()){
+            isEating = true;
+        }
+    }else if(snakeDirection == 8){
+        if(headPos.x() == food->x() && headPos.y()-1 == food->y()){
+            isEating = true;
+        }
+    }
+    if(isEating){
+        snakeHead->setParent(new Snake(new QPoint(food->x(),food->y()),nullptr));
+        snakeHead = snakeHead->getParent();
+        spawnFood();
+    }
+}
+
 void CAbase::evolutionChoice(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
@@ -58,12 +85,12 @@ void CAbase::evolutionChoice(){
     update();
     if(gameMode->currentText()=="Snake"){
         this->doTheSnakeThing();
+        eatFood();
     }else{
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
         }
     }
-
 }
 
 void CAbase::paintEvent(QPaintEvent *event){

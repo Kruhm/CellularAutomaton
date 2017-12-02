@@ -66,7 +66,6 @@ private:
 public slots:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *e);
-    void spawnFood();
     void evolutionChoice();
     void onStartBtnClicked();
     void onPauseBtnClicked();
@@ -79,6 +78,8 @@ public:
     CAbase(QWidget *parent = 0);
     ~CAbase();
     void setupUI();
+    void eatFood();
+    void spawnFood();
     void doTheSnakeThing();
     void drawField(const int dim);
 };
