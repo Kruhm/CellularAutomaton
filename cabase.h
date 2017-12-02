@@ -25,6 +25,8 @@ class CAbase : public QWidget
 
 
 private:
+    int snakeDirection;
+
     QTimer *timer;
 
     //Gamesses

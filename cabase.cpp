@@ -14,7 +14,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
-    snakeDirection = 0;
+    snakeDirection = 6;
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
@@ -28,7 +28,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
 
     //setup UI
     this->setupUI();
-    timer->start(50);
+    timer->start(500);
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
@@ -56,7 +56,7 @@ void CAbase::evolutionChoice(){
      */
     update();
     if(gameMode->currentText()=="Snake"){
-        //this->doTheSnakeThing();
+        this->doTheSnakeThing();
     }else{
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
@@ -91,7 +91,28 @@ void CAbase::doTheSnakeThing(){
         current->evolve();      // Move BodyPart
         current = current->getParent(); // go to the next BodyPart
     }
-    snakeHead = current;    // Remember the last element of the list
+    int xPos = snakeHead->getPos().x();
+    int yPos = snakeHead->getPos().y();
+    QPoint* newPos;
+    switch(snakeDirection){
+    case 2:
+        newPos = new QPoint(xPos,yPos+1);
+        snakeHead->setPos(newPos);
+        break;
+    case 4:
+        newPos = new QPoint(xPos-1,yPos);
+        snakeHead->setPos(newPos);
+        break;
+    case 6:
+        newPos = new QPoint(xPos+1,yPos);
+        snakeHead->setPos(newPos);
+        break;
+    case 8:
+        newPos = new QPoint(xPos,yPos-1);
+        snakeHead->setPos(newPos);
+        break;
+    }
+    update();
 }
 
 void CAbase::onStartBtnClicked(){
