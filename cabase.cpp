@@ -18,7 +18,6 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
-    food  = new QPoint(25,25);
     // get to the snake head
     snakeHead = snakeTail;
     while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent
@@ -41,6 +40,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     //creating the games
+    spawnFood();
 
 }
 
@@ -81,6 +81,30 @@ void CAbase::paintEvent(QPaintEvent *event){
         }
     }
      gameField->showField(); // make board visible
+}
+
+void CAbase::spawnFood(){
+    const int DIM = universeSize->value();
+    int foodX;
+    int foodY;
+    bool isPossible = false;
+    std::srand((int) time(0));
+    while(!isPossible){
+        isPossible = true;
+        foodX = std::rand() % DIM;
+        foodY = std::rand() % DIM;
+        Snake* current = snakeTail;
+        while (current) {
+            if(current->getPos().x() == foodX && current->getPos().y() == foodY){
+                isPossible = false;
+                break;
+            }
+            current = current->getParent();
+        }
+    }
+
+    qDebug() << foodX << foodY;
+    food = new QPoint(foodX,foodY);
 }
 
 void CAbase::doTheSnakeThing(){

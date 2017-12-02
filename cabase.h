@@ -1,6 +1,7 @@
 #ifndef GAMEWIDGET_H
 #define GAMEWIDGET_H
 
+#include <ctime>
 #include <QThread>
 #include <QKeyEvent>
 #include <QtCore>
@@ -65,6 +66,7 @@ private:
 public slots:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *e);
+    void spawnFood();
     void evolutionChoice();
     void onStartBtnClicked();
     void onPauseBtnClicked();
