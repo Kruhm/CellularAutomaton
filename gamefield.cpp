@@ -22,25 +22,18 @@ void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     int rectSize = 10;
     Snake* current = snakeTail;
-    //qDebug() << snakeTail;
-    //qDebug() << snakeTail->getParent()->getPos();
-    qDebug() << snakeTail->getParent()->getParent()->getPos();
-    //qDebug() << snakeTail->getParent()->getParent()->getParent();
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
-            QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
             bool isInSnake = false;
-
-            //bool test = current->getParent()->getParent()->getParent();
-            //qDebug() <<  current->getParent()->getParent()->getPos();
-            /*while(current->getParent()->getParent()->getParent()){
+            QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
+            qDebug() << x << y;
+            while(current){
                 QPoint pos = current->getPos();
                 if(pos.x() == x && pos.y() == y){
                     isInSnake = true;
-                    break;
                 }
                 current = current->getParent();
-            }*/
+            }
             if(isInSnake){
                 brush->setColor(Qt::green);
                 this->field->addRect(rect,*pen,*brush);
