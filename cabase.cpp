@@ -18,13 +18,14 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
+    food  = new QPoint(25,25);
     // get to the snake head
     snakeHead = snakeTail;
     while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent
         snakeHead = snakeHead->getParent(); // go to the next BodyPart
     }
     qDebug() << snakeHead->getPos();
-    gameField = new GameField(gameOfLife,snakeTail);
+    gameField = new GameField(gameOfLife,snakeTail); //todo accept food as parameter
 
     //setup UI
     this->setupUI();
@@ -73,7 +74,7 @@ void CAbase::paintEvent(QPaintEvent *event){
     gameField->clear();
     int dim = universeSize->value();
     if(gameMode->currentText()=="Snake"){
-        gameField->drawSnakeField(dim,snakeTail);
+        gameField->drawSnakeField(dim,snakeTail,food);
     }else{
         for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
             gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board

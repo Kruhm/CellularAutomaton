@@ -34,6 +34,7 @@ private:
     GameOfLife* gameOfLife;
     Snake* snakeTail;
     Snake* snakeHead;
+    QPoint* food;
 
     //Layouts
     QHBoxLayout* mainLayout;

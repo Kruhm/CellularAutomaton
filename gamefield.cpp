@@ -18,7 +18,7 @@ GameField::~GameField(){
     delete brush;
 }
 
-void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail){
+void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail, QPoint* food){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     int rectSize = 10;
     for(int y = 0; y < fieldSize;y++){
@@ -38,23 +38,15 @@ void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail){
             if(isInSnake){
                 brush->setColor(Qt::green);
                 this->field->addRect(rect,*pen,*brush);
+            }else if(x == food->x() && y == food->y()){
+                brush->setColor(Qt::red);
+                this->field->addRect(rect,*pen,*brush);
             }else{
                 brush->setColor(Qt::white);
                 this->field->addRect(rect,*pen,*brush); //add rect to the scene
             }
         }
     }
-
-
-
-    /*
-    if(cellState){ // if cell is alive, fill rect blue
-        brush->setColor(Qt::blue);
-        this->field->addRect(rect,*pen,*brush);
-    }else{  // otherwise cell is dead, fill rect white
-        brush->setColor(Qt::white);
-        this->field->addRect(rect,*pen,*brush); //add rect to the scene
-    }*/
 }
 
 void GameField::clear(){
