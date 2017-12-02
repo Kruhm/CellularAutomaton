@@ -95,19 +95,19 @@ void CAbase::doTheSnakeThing(){
     int yPos = snakeHead->getPos().y();
     QPoint* newPos;
     switch(snakeDirection){
-    case 2:
+    case 2: //move down
         newPos = new QPoint(xPos,yPos+1);
         snakeHead->setPos(newPos);
         break;
-    case 4:
+    case 4: //move left
         newPos = new QPoint(xPos-1,yPos);
         snakeHead->setPos(newPos);
         break;
-    case 6:
+    case 6: //move right
         newPos = new QPoint(xPos+1,yPos);
         snakeHead->setPos(newPos);
         break;
-    case 8:
+    case 8: //move up
         newPos = new QPoint(xPos,yPos-1);
         snakeHead->setPos(newPos);
         break;
@@ -159,6 +159,17 @@ void CAbase::onIntervalValueChanged(){
      * changes the refresh rate of the evolution done by the GameOfLife object
      */
     gameOfLife->setSleepTime(gameInterval->value());
+}
+
+void CAbase::keyPressEvent(QKeyEvent *e){
+    if(e->key() == Qt::Key_2 && snakeDirection != 8)
+        snakeDirection = 2;
+    else if(e->key() == Qt::Key_4 && snakeDirection != 6)
+        snakeDirection = 4;
+    else if(e->key() == Qt::Key_6 && snakeDirection != 4)
+        snakeDirection = 6;
+    else if(e->key() == Qt::Key_8 && snakeDirection != 2)
+        snakeDirection = 8;
 }
 
 void CAbase::setupUI(){

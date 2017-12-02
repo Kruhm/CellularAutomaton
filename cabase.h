@@ -2,6 +2,7 @@
 #define GAMEWIDGET_H
 
 #include <QThread>
+#include <QKeyEvent>
 #include <QtCore>
 #include <QWidget>
 #include <QHBoxLayout>
@@ -62,6 +63,7 @@ private:
 
 public slots:
     void paintEvent(QPaintEvent *event);
+    void keyPressEvent(QKeyEvent *e);
     void evolutionChoice();
     void onStartBtnClicked();
     void onPauseBtnClicked();
