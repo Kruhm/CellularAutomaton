@@ -14,6 +14,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
+    snakeDirection = 0;
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts

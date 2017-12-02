@@ -21,14 +21,15 @@ GameField::~GameField(){
 void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     int rectSize = 10;
-    Snake* current = snakeTail;
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
+            Snake* current = snakeTail;
             bool isInSnake = false;
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
-            qDebug() << x << y;
+            //qDebug() << "For-Schleife" << x << y;
             while(current){
                 QPoint pos = current->getPos();
+                //qDebug() << "While-Schleife" << pos.x() << pos.y();
                 if(pos.x() == x && pos.y() == y){
                     isInSnake = true;
                 }
