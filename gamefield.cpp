@@ -5,7 +5,7 @@ GameField::GameField(GameOfLife* gol,Snake* snakeTail, QGraphicsView *parent): Q
     this->gameOfLife = gol;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
-    pen = new QPen(Qt::black);
+    pen = new QPen(Qt::darkGray);
     this->setScene(field);
 }
 

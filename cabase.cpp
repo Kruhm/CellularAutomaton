@@ -28,7 +28,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
 
     //setup UI
     this->setupUI();
-    timer->start(500);
+    timer->start(100);
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
