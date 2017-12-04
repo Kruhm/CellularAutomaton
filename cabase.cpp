@@ -30,6 +30,10 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
+
+    QTimer* updateTimer = new QTimer(this);
+    connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
+    updateTimer->start(50);
 }
 
 CAbase::~CAbase(){
@@ -99,7 +103,6 @@ void CAbase::onClearBtnClicked(){
     timer->stop();
     gameOfLife->wipe();
     snake->reset();
-    update();
 }
 
 void CAbase::onUniverseSizeChanged(){
@@ -110,7 +113,6 @@ void CAbase::onUniverseSizeChanged(){
     gameOfLife->setSize(universeSize->value());
     snake->reset();
     snake->spawnFood(universeSize->value());
-    update();
 }
 
 void CAbase::onIntervalValueChanged(){
@@ -128,7 +130,6 @@ void CAbase::evolutionChoice(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
      */
-    update();
     if(gameMode->currentText()=="Snake"){
         int dim = universeSize->value();
         snake->setMovedOnTick(false);
