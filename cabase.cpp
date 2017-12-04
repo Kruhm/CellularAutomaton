@@ -65,7 +65,7 @@ void CAbase::eatFood(){
         }
     }
     if(isEating){
-        snakeHead->setParent(new Snake(new QPoint(food->x(),food->y()),nullptr));
+        snakeHead->setParent(new SnakeBodyPart(new QPoint(food->x(),food->y()),nullptr));
         snakeHead = snakeHead->getParent();
         spawnFood();
     }
@@ -83,7 +83,7 @@ void CAbase::snakeCollision(){
     int dim = universeSize->value();
     bool outOfBounds = headPos.x() < 0 || headPos.y() < 0 || headPos.x() >= dim || headPos.y() >= dim;
     bool canibalism = false;
-    Snake* current = snakeTail;
+    SnakeBodyPart* current = snakeTail;
     while(current != snakeHead){
         if(headPos == current->getPos()){
             canibalism = true;
@@ -141,7 +141,7 @@ void CAbase::spawnFood(){
         isPossible = true;
         foodX = std::rand() % DIM;
         foodY = std::rand() % DIM;
-        Snake* current = snakeTail;
+        SnakeBodyPart* current = snakeTail;
         while (current) {
             if(current->getPos().x() == foodX && current->getPos().y() == foodY){
                 isPossible = false;
@@ -159,9 +159,9 @@ void CAbase::doTheSnakeThing(){
     /*
      * Moves the snake in a given direction specified by a KeyPress
      */
-    Snake* current = snakeTail;
+    SnakeBodyPart* current = snakeTail;
     while(current->getParent()){ // As long as the current SnakePart has a Parent
-        current->evolve();      // Move BodyPart
+        current->moveToParent();      // Move BodyPart
         current = current->getParent(); // go to the next BodyPart
     }
     int xPos = snakeHead->getPos().x();
@@ -217,7 +217,7 @@ void CAbase::destroySnake(){
 }
 
 void CAbase::createSnake(){
-    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
+    snakeTail = new SnakeBodyPart(new QPoint(0,0),new SnakeBodyPart(new QPoint(0,1),new SnakeBodyPart(new QPoint(0,2),nullptr))); // create snake with 3 body parts
     // get to the snake head
     snakeHead = snakeTail;
     while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent

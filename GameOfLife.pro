@@ -26,12 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     gamefield.cpp \
-    snake.cpp \
     gameoflife.cpp \
-    cabase.cpp
+    cabase.cpp \
+    snake.cpp \
+    snakeBodyPart.cpp
 
 HEADERS += \
     gamefield.h \
-    snake.h \
     gameoflife.h \
-    cabase.h
+    cabase.h \
+    snake.h \
+    snakeBodyPart.h

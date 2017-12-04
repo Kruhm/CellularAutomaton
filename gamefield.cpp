@@ -1,6 +1,6 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol,Snake* snakeTail, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol,SnakeBodyPart* snakeTail, QGraphicsView *parent): QGraphicsView(parent){
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
     brush = new QBrush(Qt::white);
@@ -18,12 +18,12 @@ GameField::~GameField(){
     delete brush;
 }
 
-void GameField::drawSnakeField(const int fieldSize, Snake* snakeTail, QPoint* food){
+void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QPoint* food){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     int rectSize = 10;
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
-            Snake* current = snakeTail;
+            SnakeBodyPart* current = snakeTail;
             bool isInSnake = false;
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
             //qDebug() << "For-Schleife" << x << y;

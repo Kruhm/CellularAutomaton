@@ -1,21 +1,27 @@
 #ifndef SNAKE_H
 #define SNAKE_H
+#include "snakeBodyPart.h"
 
-#include <QPoint>
-
-class Snake
-{
+class snake{
 private:
-    QPoint *pos;
-    Snake *parent;
-public:
-    Snake(QPoint *pos, Snake *parent);
+    int direction;
+    bool movedOnTick;
 
-    void setPos(QPoint *pos);
-    void setParent(Snake *parent);
-    void evolve();
-    QPoint getPos();
-    Snake* getParent();
+    SnakeBodyPart* tail;
+    SnakeBodyPart* head;
+
+    QPoint food;
+
+public:
+    snake();
+    void eat();
+    void move();
+    void spawnFood();
+    void die();
+    void destroy();
+    void create();
+    void reset();
+    bool collision();
 };
 
 #endif // SNAKE_H
