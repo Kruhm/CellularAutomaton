@@ -1,6 +1,9 @@
 #include "gamefield.h"
 
 GameField::GameField(GameOfLife* gol, QGraphicsView *parent): QGraphicsView(parent){
+    /*
+     * GraphicsView holding a cellular grid
+     */
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
     brush = new QBrush(Qt::white);
@@ -23,27 +26,26 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
     int rectSize = 10;
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
-            SnakeBodyPart* current = snakeTail;
-            bool isInSnake = false;
+            bool isSnakeCell = false;
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
-            //qDebug() << "For-Schleife" << x << y;
-            while(current){
+            SnakeBodyPart* current = snakeTail;
+            while(current){ // loop through snake
                 QPoint pos = current->getPos();
-                //qDebug() << "While-Schleife" << pos.x() << pos.y();
-                if(pos.x() == x && pos.y() == y){
-                    isInSnake = true;
+                if(pos.x() == x && pos.y() == y){ // if (x,y) pos is the current snake pos
+                    isSnakeCell = true;
+                    break;
                 }
                 current = current->getParent();
             }
-            if(isInSnake){
+            if(isSnakeCell){    // cell is a snake body part
                 brush->setColor(Qt::green);
-                this->field->addRect(rect,*pen,*brush);
-            }else if(x == food->x() && y == food->y()){
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }else if(x == food->x() && y == food->y()){ // cell is food
                 brush->setColor(Qt::red);
-                this->field->addRect(rect,*pen,*brush);
-            }else{
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }else{  // cell is empty
                 brush->setColor(Qt::white);
-                this->field->addRect(rect,*pen,*brush); //add rect to the scene
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
             }
         }
     }
@@ -63,7 +65,7 @@ void GameField::showField(){
     this->setScene(field);
 }
 
-void GameField::drawFieldCell(int x, int y, int rectSize, bool cellState){
+void GameField::drawGameOfLifeCell(int x, int y, int rectSize, bool cellState){
     /*
      * Draws a rectangle on a given x and y position with a given size.
      * Rect will be filled blue if cellState is true, otherwise it's white
@@ -85,11 +87,10 @@ void GameField::mousePressEvent(QMouseEvent *e){
     /*
      * Gets the x and y pos of the mouseclick on the field and fills the associated rect blue
      */
-    QPoint origin = mapFromGlobal(QCursor::pos());
-    QPointF relativeOrigin = mapToScene(origin);
-    int x = relativeOrigin.x()/10;
-    int y = relativeOrigin.y()/10;
+    QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
+    QPointF relativeOrigin = mapToScene(origin);    // map x,y to the current board
+    int x = relativeOrigin.x()/10; // pixel to column
+    int y = relativeOrigin.y()/10; // pixel to row
     bool state = this->gameOfLife->getCellState(x,y);
-    this->gameOfLife->setCellState(x,y,!state);
-    //qDebug() << "x: " << int(relativeOrigin.x()/10) << " y: " << int(relativeOrigin.y()/10);
+    this->gameOfLife->setCellState(x,y,!state); //toggle cell state
 }

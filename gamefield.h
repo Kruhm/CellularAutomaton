@@ -25,7 +25,7 @@ public:
     GameField(GameOfLife* gol, QGraphicsView *parent = 0);
     ~GameField();
     void drawSnakeField(int gameSize, SnakeBodyPart* snakeTail, QPoint* food);
-    void drawFieldCell(int x,int y, int rectSize, bool cellState);
+    void drawGameOfLifeCell(int x,int y, int rectSize, bool cellState);
     void clear();
     void showField();
 private slots:

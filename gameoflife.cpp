@@ -1,20 +1,26 @@
 #include "gameoflife.h"
 
 GameOfLife::GameOfLife(const int dim,const int sleepTime, const bool doEvolution){
+    /*
+     * A C++ implementation of the game
+     * Convey's Game of Life
+     */
     this->dim = dim;
     this->doEvolution = doEvolution;    //used to keep thread running
-    this->sleepTime = sleepTime; //in ms
+    this->sleepTime = sleepTime; //wait time in ms
     setSize(dim);
     createGlider();
 }
 
 void GameOfLife::createGlider(){
-    //glider
+    /*
+     * creates the glider formation
+     */
     setCellState(0,0,1);
     setCellState(2,0,1);
     setCellState(1,1,1);
     setCellState(2,1,1);
-    setCellState(1,2,1); //
+    setCellState(1,2,1);
 }
 
 GameOfLife::~GameOfLife(){
@@ -37,20 +43,20 @@ void GameOfLife::evolve() {
      * Applies the rules of the game to every instance of the field
      */
 
-    vector<vector<int>> changed;
-    for (int y = 0; y < getDim(); y++) {
+    vector<vector<int>> changed;    // vector for changed cells
+    for (int y = 0; y < getDim(); y++) { // evaluate which cell should change its state
         for (int x = 0; x < getDim(); x++) {
-            bool rule_applied = apply_rules(x, y);
-            bool cellState = getCellState(x,y);
-            if((rule_applied && !cellState) || (!rule_applied && cellState)){
-                vector<int> newState = {x,y,rule_applied};
-                changed.push_back(newState);
+            bool rule_applied = apply_rules(x, y); // should cell change state
+            bool cellState = getCellState(x,y); // current cell state
+            if((rule_applied && !cellState) || (!rule_applied && cellState)){ // if cell should change state
+                vector<int> newState = {x,y,rule_applied};  // mark x y with new state
+                changed.push_back(newState);    // add newState to vectore changed
             }
         }
     }
 
-    for(vector<int> changedCell : changed){
-        setCellState(changedCell.at(0),changedCell.at(1),changedCell.at(2));
+    for(vector<int> changedCell : changed){ // change every changed cell on the board to its new state
+        setCellState(changedCell.at(0),changedCell.at(1),changedCell.at(2)); //.at(x) <- get from index x
     }
 }
 

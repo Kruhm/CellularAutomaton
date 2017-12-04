@@ -1,6 +1,9 @@
 #include "snakeBodyPart.h"
 
 SnakeBodyPart::SnakeBodyPart(QPoint *pos, SnakeBodyPart *parent=nullptr){
+    /*
+     * linked list of Snake body Parts, with each item storing a QPoint
+     */
     this->pos = pos;
     this->parent = parent;
 }

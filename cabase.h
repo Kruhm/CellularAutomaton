@@ -3,30 +3,24 @@
 
 #include <ctime>
 #include <QThread>
-#include <QKeyEvent>
-#include <QtCore>
+#include <QPoint>
+#include <QTimer>
 #include <QWidget>
+#include <QKeyEvent>
+#include <QPaintEvent>
 #include <QHBoxLayout>
 #include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QPoint>
 #include <QSpinBox>
 #include <QComboBox>
-#include <QMessageBox>
-#include <QTimer>
+#include <QPushButton>
+#include <QLabel>
 
 #include "snake.h"
-#include "snakeBodyPart.h"
 #include "gameoflife.h"
 #include "gamefield.h"
 
-class CAbase : public QWidget
-{
+class CAbase : public QWidget{
     Q_OBJECT
-
 
 private:
     QTimer *timer;
@@ -46,10 +40,9 @@ private:
     QSpinBox* universeSize;
     QSpinBox* gameInterval;
 
-    //ComboBox
+    //ComboBox and its content
     QComboBox* gameMode;
-    //QString gameModeList[] = new QString[2];
-
+    QString gameModeList[4];
     //Buttons
     QPushButton* startBtn;
     QPushButton* stopBtn;
@@ -72,7 +65,6 @@ public:
     CAbase(QWidget *parent = 0);
     ~CAbase();
     void setupUI();
-    void drawField(const int dim);
 };
 
 #endif // GAMEWIDGET_H

@@ -1,6 +1,9 @@
 #include "cabase.h"
 
 CAbase::CAbase(QWidget *parent): QWidget(parent){
+    /*
+     * GUI for a cellular automaton with the games Convey's Game of Life and Snake
+     */
     //Initialize Attributesses
     timer = new QTimer(this);
     mainLayout = new QHBoxLayout(this);
@@ -13,15 +16,24 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     startBtn = new QPushButton(this);
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
-    //gameModeList[] = {"Game of Life", "Snake"};
 
+    // initialize options for the game mode spin box
+    gameModeList[0] = "Game of Life";
+    gameModeList[1] = "Snake";
+    gameModeList[2] = "MileStone3";
+    gameModeList[3] = "MileStone4";
+
+    //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
-    //qDebug() << snakeHead->getPos();
-    gameField = new GameField(gameOfLife); //todo accept food as parameter
+    snake = new Snake(50);  // dim for placing food
+
+    // initialize grid
+    gameField = new GameField(gameOfLife);
 
     //setup UI
     this->setupUI();
-    snake = new Snake(universeSize->value());
+
+
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
@@ -31,6 +43,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
+    // timer to update the gamefield every 50ms
     QTimer* updateTimer = new QTimer(this);
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
     updateTimer->start(50);
@@ -48,41 +61,45 @@ void CAbase::paintEvent(QPaintEvent *event){
      * Draws the grid on the left side of the Window.
      * Currently only for Game of Life, Blue is an alive cell, White is a dead cell
      */
-    gameField->clear();
+    gameField->clear(); //emptying field
     int dim = universeSize->value();
-    if(gameMode->currentText()=="Snake"){
-        gameField->drawSnakeField(dim,snake->getTail(),snake->getFood());
-    }else{
+    if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
+        gameField->drawSnakeField(dim,snake->getTail(),snake->getFood()); // draw board for the snake game
+    }else{  // Mode => Game of Life
         for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
-            gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
+            gameField->drawGameOfLifeCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
         }
     }
      gameField->showField(); // make board visible
 }
 
 void CAbase::keyPressEvent(QKeyEvent *e){
+    /*
+     * Key Event Handler
+     * evaluates the key pressed.
+     */
     int snakeDirection = snake->getDirection();
-    if(snake->getMovedOnTick())
+    if(snake->getMovedOnTick()) // if snake already had a direction change on tick
         return;
-    else if(e->key() == Qt::Key_2 && snakeDirection != 8)
+    else if(e->key() == Qt::Key_2 && snakeDirection != 8) // down - 2 has been pressed and not moving up
         snake->setDirection(2);
-    else if(e->key() == Qt::Key_4 && snakeDirection != 6)
+    else if(e->key() == Qt::Key_4 && snakeDirection != 6) // left - 4 has been pressed and not moving right
         snake->setDirection(4);
-    else if(e->key() == Qt::Key_6 && snakeDirection != 4)
+    else if(e->key() == Qt::Key_6 && snakeDirection != 4) // right - 6 has been pressed and not moving left
         snake->setDirection(6);
-    else if(e->key() == Qt::Key_8 && snakeDirection != 2)
+    else if(e->key() == Qt::Key_8 && snakeDirection != 2) // up - 8 has been pressed and not moving down
         snake->setDirection(8);
-    snake->setMovedOnTick(true);
+    snake->setMovedOnTick(true); // snake can change direction only one time per tick
 }
 
 void CAbase::onStartBtnClicked(){
     /*
      * Starts the GameOfLife Thread with the given interval
      */
-    if(gameMode->currentText() == "Snake"){
+    if(gameMode->currentText() == gameModeList[1]){ //If snake
         timer->start(gameInterval->value());
-    }else{
-        gameOfLife->setDoEvolution(true);
+    }else{                                          //Else Game of Life
+        gameOfLife->setDoEvolution(true); // makes evolution in Game of Life possible
         gameOfLife->start();
         timer->start(50);
     }
@@ -119,9 +136,9 @@ void CAbase::onIntervalValueChanged(){
     /*
      * changes the refresh rate of the evolution done by the GameOfLife object
      */
-    if(gameMode->currentText() == "Snake"){
+    if(gameMode->currentText() == gameModeList[1]){ // If Snake
         timer->setInterval(gameInterval->value());
-    }
+    }                                               // Game of Life
     gameOfLife->setSleepTime(gameInterval->value());
 
 }
@@ -130,16 +147,16 @@ void CAbase::evolutionChoice(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
      */
-    if(gameMode->currentText()=="Snake"){
+    if(gameMode->currentText()==gameModeList[1]){   // If Snake
         int dim = universeSize->value();
-        snake->setMovedOnTick(false);
-        snake->eat();
-        snake->move(dim);
-        if(snake->collision(dim)){
+        snake->setMovedOnTick(false);   // new tick new direction possible
+        snake->eat();       // checks for food
+        snake->move(dim);   // move snake body
+        if(snake->collision(dim)){  // if snake collides
             timer->stop();
-            snake->die();
+            snake->die();   // open dying message
         }
-    }else{
+    }else{                                          //Else game of Life
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
         }
@@ -172,8 +189,10 @@ void CAbase::setupUI(){
     gameInterval->setValue(500);
 
     //Add game mode tabs to ComboBox
-    gameMode->addItem("Game of Life");
-    gameMode->addItem("Snake");
+    gameMode->addItem(gameModeList[0]);
+    gameMode->addItem(gameModeList[1]);
+    //gameMode->addItem(gameModeList[2]); // for the next MileStones!
+    //gameMode->addItem(gameModeList[3]);
 
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);

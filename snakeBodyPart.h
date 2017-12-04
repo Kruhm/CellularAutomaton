@@ -3,8 +3,8 @@
 
 #include <QPoint>
 
-class SnakeBodyPart
-{
+class SnakeBodyPart{
+
 private:
     QPoint *pos;
     SnakeBodyPart *parent;
