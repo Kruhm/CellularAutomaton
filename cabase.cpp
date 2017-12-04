@@ -13,7 +13,6 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     startBtn = new QPushButton(this);
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
-    changeSizeBtn = new QPushButton(this);
     //gameModeList[] = {"Game of Life", "Snake"};
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
@@ -30,7 +29,6 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(clearBtn,SIGNAL(clicked()),this,SLOT(onClearBtnClicked()));
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
-    connect(changeSizeBtn,SIGNAL(clicked()),this,SLOT(onChangeBtnClicked()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     //creating the games
@@ -208,14 +206,6 @@ void CAbase::onClearBtnClicked(){
     update();
 }
 
-void CAbase::onChangeBtnClicked(){
-    /*
-     * Wipes the board and changes the universe size
-     */
-    gameOfLife->setSize(universeSize->value());
-    update();
-}
-
 void CAbase::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
@@ -247,17 +237,16 @@ void CAbase::setupUI(){
     startBtn->setText("start");
     stopBtn->setText("pause");
     clearBtn->setText("clear");
-    changeSizeBtn->setText("change");
 
     //Give labels text
-    universeSizeLbl->setText("Universe Size  (1 - 50)");
+    universeSizeLbl->setText("Universe Size  (10 - 100)");
     gameIntervalLbl->setText("Generation Interval (100-10000)");
 
     //set boundaries of SpinBoxes
     gameInterval->setMaximum(10000);
     universeSize->setMaximum(100);
     gameInterval->setMinimum(100);
-    universeSize->setMinimum(1);
+    universeSize->setMinimum(10);
     gameInterval->setSingleStep(50);
 
     //set SpinBoxes suffixes
@@ -282,7 +271,6 @@ void CAbase::setupUI(){
     menuSide->addWidget(clearBtn,0,2);
     menuSide->addWidget(universeSizeLbl,1,0,1,3); // Second Row
     menuSide->addWidget(universeSize,2,0,1,3); //Third Row
-    menuSide->addWidget(changeSizeBtn,3,2);    //Fourth Row
     menuSide->addWidget(gameIntervalLbl,4,0,1,2); //Fifth Row
     menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
 
@@ -298,5 +286,5 @@ void CAbase::setupUI(){
     //start the initial timer
 
     //set size of window
-    this->resize(800,550);
+    this->resize(1000,600);
 }

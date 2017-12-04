@@ -57,7 +57,6 @@ private:
     QPushButton* startBtn;
     QPushButton* stopBtn;
     QPushButton* clearBtn;
-    QPushButton* changeSizeBtn;
 
     //gameField
     GameField* gameField;
@@ -71,7 +70,6 @@ public slots:
     void onStartBtnClicked();
     void onPauseBtnClicked();
     void onClearBtnClicked();
-    void onChangeBtnClicked();
     void onUniverseSizeChanged();
     void onIntervalValueChanged();
 
