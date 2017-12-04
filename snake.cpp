@@ -1,10 +1,14 @@
 #include "snake.h"
 
-snake::snake(){
+Snake::Snake(const int DIM){
     create();
+    spawnFood(DIM);
+
+    movedOnTick = false;
+    isEating = false;
 }
 
-bool snake::collision(int dim){
+bool Snake::collision(int dim){
     QPoint headPos = head->getPos();
     bool outOfBounds = headPos.x() < 0 || headPos.y() < 0 || headPos.x() >= dim || headPos.y() >= dim;
     bool canibalism = false;
@@ -19,34 +23,13 @@ bool snake::collision(int dim){
     return (outOfBounds || canibalism);
 }
 
-void snake::eat(){
+void Snake::eat(){
     QPoint headPos = head->getPos();
     bool isEating = false;
-    if(direction == 2){
-        if(headPos.x() == food->x() && headPos.y()+1 == food->y()){
-            isEating = true;
-        }
-    }else if(direction == 4){
-        if(headPos.x()-1 == food->x() && headPos.y() == food->y()){
-            isEating = true;
-        }
-    }else if(direction == 6){
-        if(headPos.x()+1 == food->x() && headPos.y() == food->y()){
-            isEating = true;
-        }
-    }else if(direction == 8){
-        if(headPos.x() == food->x() && headPos.y()-1 == food->y()){
-            isEating = true;
-        }
-    }
-    if(isEating){
-        head->setParent(new SnakeBodyPart(new QPoint(food->x(),food->y()),nullptr));
-        head = head->getParent();
-        spawnFood();
-    }
+
 }
 
-void snake::spawnFood(const int DIM){
+void Snake::spawnFood(const int DIM){
     int foodX;
     int foodY;
     bool isPossible = false;
@@ -69,7 +52,7 @@ void snake::spawnFood(const int DIM){
     food = new QPoint(foodX,foodY);
 }
 
-void snake::move(){
+void Snake::move(){
     /*
      * Moves the snake in a given direction specified by a KeyPress
      */
@@ -103,24 +86,24 @@ void snake::move(){
     }
 }
 
-void snake::die(){
+void Snake::die(){
     QMessageBox obituary;
     obituary.setText("Snake died... you lose");
     obituary.exec();
     reset();
 }
 
-void snake::reset(){
+void Snake::reset(){
     destroy();
     create();
 }
 
-void snake::destroy(){
+void Snake::destroy(){
     delete head;
     delete tail;
 }
 
-void snake::create(){
+void Snake::create(){
     tail = new SnakeBodyPart(new QPoint(0,0),new SnakeBodyPart(new QPoint(0,1),new SnakeBodyPart(new QPoint(0,2),nullptr))); // create snake with 3 body parts
     // get to the snake head
     head = tail;
@@ -129,3 +112,36 @@ void snake::create(){
     }
     direction = 2;
 }
+
+void Snake::setDirection(const int direction){
+    this->direction = direction;
+}
+
+void Snake::setIsEating(const bool isEating){
+    this->isEating = isEating;
+}
+
+void Snake::setMovedOnTick(const bool movedOnTick){
+    this->movedOnTick = movedOnTick;
+}
+
+SnakeBodyPart Snake::getTail(){
+    return *tail;
+}
+
+QPoint Snake::getFood(){
+    return *food;
+}
+
+int Snake::getDirection(){
+    return direction;
+}
+
+bool Snake::getIsEating(){
+    return isEating;
+}
+
+bool Snake::getMovedOnTick(){
+    return movedOnTick;
+}
+

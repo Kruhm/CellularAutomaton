@@ -18,6 +18,7 @@
 #include <QMessageBox>
 #include <QTimer>
 
+#include "snake.h"
 #include "snakeBodyPart.h"
 #include "gameoflife.h"
 #include "gamefield.h"
@@ -37,6 +38,7 @@ private:
     GameOfLife* gameOfLife;
     SnakeBodyPart* snakeTail;
     SnakeBodyPart* snakeHead;
+    Snake* snake;
     QPoint* food;
 
     //Layouts

@@ -1,27 +1,41 @@
 #ifndef SNAKE_H
 #define SNAKE_H
+
+#include <ctime>
+#include <QMessageBox>
 #include "snakeBodyPart.h"
 
-class snake{
+class Snake{
 private:
     int direction;
     bool movedOnTick;
+    bool isEating;
 
     SnakeBodyPart* tail;
     SnakeBodyPart* head;
 
-    QPoint food;
+    QPoint* food;
 
 public:
-    snake();
+    Snake(int DIM);
     void eat();
     void move();
-    void spawnFood();
+    void spawnFood(int DIM);
     void die();
     void destroy();
     void create();
     void reset();
-    bool collision();
+    void setDirection(int direction);
+    void setIsEating(bool isEating);
+    void setMovedOnTick(bool movedOnTick);
+
+    SnakeBodyPart getTail();
+    QPoint getFood();
+    int getDirection();
+    bool getIsEating();
+    bool getMovedOnTick();
+    bool collision(int dim);
+
 };
 
 #endif // SNAKE_H

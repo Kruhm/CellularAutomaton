@@ -1,6 +1,6 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol,SnakeBodyPart* snakeTail, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol, QGraphicsView *parent): QGraphicsView(parent){
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
     brush = new QBrush(Qt::white);

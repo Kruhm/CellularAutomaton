@@ -22,7 +22,7 @@ private:
     QBrush* bgBrush;
     QPen* pen;
 public:
-    GameField(GameOfLife* gol, SnakeBodyPart* snakeTail, QGraphicsView *parent = 0);
+    GameField(GameOfLife* gol, QGraphicsView *parent = 0);
     ~GameField();
     void drawSnakeField(int gameSize, SnakeBodyPart* snakeTail, QPoint* food);
     void drawFieldCell(int x,int y, int rectSize, bool cellState);

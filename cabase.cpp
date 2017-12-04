@@ -19,10 +19,11 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     createSnake();
     //qDebug() << snakeHead->getPos();
-    gameField = new GameField(gameOfLife,snakeTail); //todo accept food as parameter
+    gameField = new GameField(gameOfLife); //todo accept food as parameter
 
     //setup UI
     this->setupUI();
+    snake = new Snake(universeSize->value());
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
@@ -103,10 +104,13 @@ void CAbase::evolutionChoice(){
      */
     update();
     if(gameMode->currentText()=="Snake"){
-        movedOnTick = false;
-        eatFood();
-        this->doTheSnakeThing();
-        snakeCollision();
+        snake->setMovedOnTick(false);
+        snake->eat();
+        snake->move();
+        if(snake->collision(universeSize->value())){
+            timer->stop();
+            snake->die();
+        }
     }else{
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
@@ -122,7 +126,7 @@ void CAbase::paintEvent(QPaintEvent *event){
     gameField->clear();
     int dim = universeSize->value();
     if(gameMode->currentText()=="Snake"){
-        gameField->drawSnakeField(dim,snakeTail,food);
+        // gameField->drawSnakeField(dim,snake->getTail(),snake->getFood());
     }else{
         for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
             gameField->drawFieldCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
@@ -237,8 +241,7 @@ void CAbase::onClearBtnClicked(){
      */
     timer->stop();
     gameOfLife->wipe();
-    destroySnake();
-    createSnake();
+    snake->reset();
     update();
 }
 
@@ -248,9 +251,8 @@ void CAbase::onUniverseSizeChanged(){
      */
     timer->stop();
     gameOfLife->setSize(universeSize->value());
-    destroySnake();
-    createSnake();
-    spawnFood();
+    snake->reset();
+    snake->spawnFood(universeSize->value());
     update();
 }
 
@@ -266,17 +268,18 @@ void CAbase::onIntervalValueChanged(){
 }
 
 void CAbase::keyPressEvent(QKeyEvent *e){
-    if(movedOnTick)
+    snakeDirection = snake->getDirection();
+    if(snake->getMovedOnTick())
         return;
     else if(e->key() == Qt::Key_2 && snakeDirection != 8)
-        snakeDirection = 2;
+        snake->setDirection(2);
     else if(e->key() == Qt::Key_4 && snakeDirection != 6)
-        snakeDirection = 4;
+        snake->setDirection(4);
     else if(e->key() == Qt::Key_6 && snakeDirection != 4)
-        snakeDirection = 6;
+        snake->setDirection(6);
     else if(e->key() == Qt::Key_8 && snakeDirection != 2)
-        snakeDirection = 8;
-    movedOnTick = true;
+        snake->setDirection(8);
+    snake->setMovedOnTick(true);
 }
 
 void CAbase::setupUI(){
