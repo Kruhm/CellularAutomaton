@@ -19,7 +19,7 @@ private:
 public:
     Snake(int DIM);
     void eat();
-    void move();
+    void move(int DIM);
     void spawnFood(int DIM);
     void die();
     void destroy();
@@ -29,8 +29,8 @@ public:
     void setIsEating(bool isEating);
     void setMovedOnTick(bool movedOnTick);
 
-    SnakeBodyPart getTail();
-    QPoint getFood();
+    SnakeBodyPart* getTail() const;
+    QPoint* getFood() const;
     int getDirection();
     bool getIsEating();
     bool getMovedOnTick();

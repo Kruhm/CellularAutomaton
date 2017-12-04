@@ -25,7 +25,10 @@ bool Snake::collision(int dim){
 
 void Snake::eat(){
     QPoint headPos = head->getPos();
-    bool isEating = false;
+    isEating = false;
+    if(food->y() == headPos.y() && food->x() == headPos.x()){
+        isEating = true;
+    }
 
 }
 
@@ -52,14 +55,20 @@ void Snake::spawnFood(const int DIM){
     food = new QPoint(foodX,foodY);
 }
 
-void Snake::move(){
+void Snake::move(const int DIM){
     /*
      * Moves the snake in a given direction specified by a KeyPress
      */
     SnakeBodyPart* current = tail;
-    while(current->getParent()){ // As long as the current SnakePart has a Parent
-        current->moveToParent();      // Move BodyPart
-        current = current->getParent(); // go to the next BodyPart
+    if (isEating){
+        head->setParent(new SnakeBodyPart(new QPoint(food->x(),food->y()),nullptr));
+        head = head->getParent();
+        spawnFood(DIM);
+    } else {
+        while(current->getParent()){ // As long as the current SnakePart has a Parent
+            current->moveToParent();      // Move BodyPart
+            current = current->getParent(); // go to the next BodyPart
+        }
     }
     int xPos = head->getPos().x();
     int yPos = head->getPos().y();
@@ -125,12 +134,12 @@ void Snake::setMovedOnTick(const bool movedOnTick){
     this->movedOnTick = movedOnTick;
 }
 
-SnakeBodyPart Snake::getTail(){
-    return *tail;
+SnakeBodyPart *Snake::getTail() const{
+    return tail;
 }
 
-QPoint Snake::getFood(){
-    return *food;
+QPoint *Snake::getFood() const{
+    return food;
 }
 
 int Snake::getDirection(){

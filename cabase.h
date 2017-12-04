@@ -29,18 +29,11 @@ class CAbase : public QWidget
 
 
 private:
-    int snakeDirection;
-    bool movedOnTick;
-
     QTimer *timer;
 
     //Gamesses
     GameOfLife* gameOfLife;
-    SnakeBodyPart* snakeTail;
-    SnakeBodyPart* snakeHead;
     Snake* snake;
-    QPoint* food;
-
     //Layouts
     QHBoxLayout* mainLayout;
     QGridLayout* menuSide;
@@ -65,8 +58,6 @@ private:
     //gameField
     GameField* gameField;
 
-    void test();
-
 public slots:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *e);
@@ -81,14 +72,6 @@ public:
     CAbase(QWidget *parent = 0);
     ~CAbase();
     void setupUI();
-    void eatFood();
-    void spawnFood();
-    void doTheSnakeThing();
-    void createSnake();
-    void destroySnake();
-    void snakeCollision();
-    void snakeDied();
-    void snakeReset();
     void drawField(const int dim);
 };
 
