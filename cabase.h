@@ -15,6 +15,7 @@
 #include <QPoint>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QMessageBox>
 #include <QTimer>
 
 #include "snake.h"
@@ -28,6 +29,7 @@ class CAbase : public QWidget
 
 private:
     int snakeDirection;
+    bool movedOnTick;
 
     QTimer *timer;
 
@@ -82,6 +84,9 @@ public:
     void doTheSnakeThing();
     void createSnake();
     void destroySnake();
+    void snakeCollision();
+    void snakeDied();
+    void snakeReset();
     void drawField(const int dim);
 };
 

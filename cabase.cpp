@@ -13,6 +13,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     startBtn = new QPushButton(this);
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
+    movedOnTick = false;
     //gameModeList[] = {"Game of Life", "Snake"};
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
@@ -70,14 +71,42 @@ void CAbase::eatFood(){
     }
 }
 
+void CAbase::snakeDied(){
+    QMessageBox obituary;
+    obituary.setText("Snake died... you lose");
+    obituary.exec();
+    snakeReset();
+}
+
+void CAbase::snakeCollision(){
+    QPoint headPos = snakeHead->getPos();
+    int dim = universeSize->value();
+    bool outOfBounds = headPos.x() < 0 || headPos.y() < 0 || headPos.x() >= dim || headPos.y() >= dim;
+    bool canibalism = false;
+    Snake* current = snakeTail;
+    while(current != snakeHead){
+        if(headPos == current->getPos()){
+            canibalism = true;
+            break;
+        }
+        current = current->getParent();
+    }
+    if(outOfBounds || canibalism){
+        timer->stop();
+        snakeDied();
+    }
+}
+
 void CAbase::evolutionChoice(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
      */
     update();
     if(gameMode->currentText()=="Snake"){
+        movedOnTick = false;
         this->doTheSnakeThing();
         eatFood();
+        snakeCollision();
     }else{
         if(!gameOfLife->isRunning()){   // if the thread isn't currently running
             gameOfLife->start();    // start the GoL thread
@@ -155,6 +184,8 @@ void CAbase::doTheSnakeThing(){
         newPos = new QPoint(xPos,yPos-1);
         snakeHead->setPos(newPos);
         break;
+    default:
+        break;
     }
     update();
 }
@@ -195,6 +226,11 @@ void CAbase::createSnake(){
     snakeDirection = 2;
 }
 
+void CAbase::snakeReset(){
+    destroySnake();
+    createSnake();
+}
+
 void CAbase::onClearBtnClicked(){
     /*
      * Wipes the Board of every living cell
@@ -210,7 +246,11 @@ void CAbase::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
      */
+    timer->stop();
     gameOfLife->setSize(universeSize->value());
+    destroySnake();
+    createSnake();
+    spawnFood();
     update();
 }
 
@@ -218,11 +258,17 @@ void CAbase::onIntervalValueChanged(){
     /*
      * changes the refresh rate of the evolution done by the GameOfLife object
      */
+    if(gameMode->currentText() == "Snake"){
+        timer->setInterval(gameInterval->value());
+    }
     gameOfLife->setSleepTime(gameInterval->value());
+
 }
 
 void CAbase::keyPressEvent(QKeyEvent *e){
-    if(e->key() == Qt::Key_2 && snakeDirection != 8)
+    if(movedOnTick)
+        return;
+    else if(e->key() == Qt::Key_2 && snakeDirection != 8)
         snakeDirection = 2;
     else if(e->key() == Qt::Key_4 && snakeDirection != 6)
         snakeDirection = 4;
@@ -230,6 +276,7 @@ void CAbase::keyPressEvent(QKeyEvent *e){
         snakeDirection = 6;
     else if(e->key() == Qt::Key_8 && snakeDirection != 2)
         snakeDirection = 8;
+    movedOnTick = true;
 }
 
 void CAbase::setupUI(){
@@ -238,7 +285,7 @@ void CAbase::setupUI(){
     stopBtn->setText("pause");
     clearBtn->setText("clear");
 
-    //Give labels text
+    //Give labels text    QPushButton* changeSizeBtn;
     universeSizeLbl->setText("Universe Size  (10 - 100)");
     gameIntervalLbl->setText("Generation Interval (100-10000)");
 
