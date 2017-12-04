@@ -14,21 +14,15 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
     changeSizeBtn = new QPushButton(this);
-    snakeDirection = 6;
+    //gameModeList[] = {"Game of Life", "Snake"};
 
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
-    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
-    // get to the snake head
-    snakeHead = snakeTail;
-    while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent
-        snakeHead = snakeHead->getParent(); // go to the next BodyPart
-    }
-    qDebug() << snakeHead->getPos();
+    createSnake();
+    //qDebug() << snakeHead->getPos();
     gameField = new GameField(gameOfLife,snakeTail); //todo accept food as parameter
 
     //setup UI
     this->setupUI();
-    timer->start(100);
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
@@ -130,7 +124,7 @@ void CAbase::spawnFood(){
         }
     }
 
-    qDebug() << foodX << foodY;
+    //qDebug() << foodX << foodY;
     food = new QPoint(foodX,foodY);
 }
 
@@ -171,8 +165,13 @@ void CAbase::onStartBtnClicked(){
     /*
      * Starts the GameOfLife Thread with the given interval
      */
-    gameOfLife->setDoEvolution(true);
-    gameOfLife->start();
+    if(gameMode->currentText() == "Snake"){
+        timer->start(gameInterval->value());
+    }else{
+        gameOfLife->setDoEvolution(true);
+        gameOfLife->start();
+        timer->start(50);
+    }
 }
 
 void CAbase::onPauseBtnClicked(){
@@ -180,13 +179,32 @@ void CAbase::onPauseBtnClicked(){
      * Stops the currently running GameOfLife Thread
      */
     gameOfLife->setDoEvolution(false);
+    timer->stop();
+}
+
+void CAbase::destroySnake(){
+    delete snakeTail;
+    delete snakeHead;
+}
+
+void CAbase::createSnake(){
+    snakeTail = new Snake(new QPoint(0,0),new Snake(new QPoint(0,1),new Snake(new QPoint(0,2),nullptr))); // create snake with 3 body parts
+    // get to the snake head
+    snakeHead = snakeTail;
+    while(snakeHead->getParent()){ // As long as the current SnakePart has a Parent
+        snakeHead = snakeHead->getParent(); // go to the next BodyPart
+    }
+    snakeDirection = 2;
 }
 
 void CAbase::onClearBtnClicked(){
     /*
      * Wipes the Board of every living cell
      */
+    timer->stop();
     gameOfLife->wipe();
+    destroySnake();
+    createSnake();
     update();
 }
 

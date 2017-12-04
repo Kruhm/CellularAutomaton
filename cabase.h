@@ -51,6 +51,7 @@ private:
 
     //ComboBox
     QComboBox* gameMode;
+    //QString gameModeList[] = new QString[2];
 
     //Buttons
     QPushButton* startBtn;
@@ -81,6 +82,8 @@ public:
     void eatFood();
     void spawnFood();
     void doTheSnakeThing();
+    void createSnake();
+    void destroySnake();
     void drawField(const int dim);
 };
 
