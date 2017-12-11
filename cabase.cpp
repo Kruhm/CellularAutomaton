@@ -33,8 +33,6 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     //setup UI
     this->setupUI();
 
-
-
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
     connect(stopBtn,SIGNAL(clicked()),this,SLOT(onPauseBtnClicked()));
@@ -59,7 +57,7 @@ CAbase::~CAbase(){
 void CAbase::paintEvent(QPaintEvent *event){
     /*
      * Draws the grid on the left side of the Window.
-     * Currently only for Game of Life, Blue is an alive cell, White is a dead cell
+     * Chooses which game should be drawn
      */
     gameField->clear(); //emptying field
     int dim = universeSize->value();
@@ -215,8 +213,6 @@ void CAbase::setupUI(){
 
     //setting Layout of Window
     this->setLayout(mainLayout);
-
-    //start the initial timer
 
     //set size of window
     this->resize(1000,600);
