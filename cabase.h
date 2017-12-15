@@ -35,13 +35,16 @@ private:
     //Labels
     QLabel* universeSizeLbl;
     QLabel* gameIntervalLbl;
+    QLabel* cellModelbl;
 
     //SpinBoxes
     QSpinBox* universeSize;
     QSpinBox* gameInterval;
 
     //ComboBox and its content
+    QComboBox* cellMode;
     QComboBox* gameMode;
+    QString cellModeList[3];
     QString gameModeList[4];
     //Buttons
     QPushButton* startBtn;

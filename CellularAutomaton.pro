@@ -29,11 +29,15 @@ SOURCES += \
     gameoflife.cpp \
     cabase.cpp \
     snake.cpp \
-    snakeBodyPart.cpp
+    snakeBodyPart.cpp \
+    predatorvictim.cpp \
+    cell.cpp
 
 HEADERS += \
     gamefield.h \
     gameoflife.h \
     cabase.h \
     snake.h \
-    snakeBodyPart.h
+    snakeBodyPart.h \
+    predatorvictim.h \
+    cell.h

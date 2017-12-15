@@ -10,18 +10,25 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     menuSide = new QGridLayout(this);
     universeSizeLbl = new QLabel(this);
     gameIntervalLbl = new QLabel(this);
+    cellModelbl = new QLabel(this);
     universeSize = new QSpinBox(this);
     gameInterval = new QSpinBox(this);
     gameMode = new QComboBox(this);
+    cellMode = new QComboBox(this);
     startBtn = new QPushButton(this);
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
 
-    // initialize options for the game mode spin box
+    // initialize options for the game mode combobox
     gameModeList[0] = "Game of Life";
     gameModeList[1] = "Snake";
-    gameModeList[2] = "MileStone3";
+    gameModeList[2] = "Predator - Victim";
     gameModeList[3] = "MileStone4";
+
+    // initialize options for the cell mode combobox
+    cellModeList[0] = "Predator";
+    cellModeList[1] = "Victim";
+    cellModeList[2] = "Food";
 
     //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
@@ -170,6 +177,7 @@ void CAbase::setupUI(){
     //Give labels text    QPushButton* changeSizeBtn;
     universeSizeLbl->setText("Universe Size  (10 - 100)");
     gameIntervalLbl->setText("Generation Interval (100-10000)");
+    cellModelbl->setText("Cell Mode");
 
     //set boundaries of SpinBoxes
     gameInterval->setMaximum(10000);
@@ -189,12 +197,18 @@ void CAbase::setupUI(){
     //Add game mode tabs to ComboBox
     gameMode->addItem(gameModeList[0]);
     gameMode->addItem(gameModeList[1]);
-    //gameMode->addItem(gameModeList[2]); // for the next MileStones!
+    gameMode->addItem(gameModeList[2]); // for the next MileStones!
     //gameMode->addItem(gameModeList[3]);
+
+    //Add lasdna
+    cellMode->addItem(cellModeList[0]);
+    cellMode->addItem(cellModeList[1]);
+    cellMode->addItem(cellModeList[2]);
 
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);
     gameIntervalLbl->setFixedHeight(10);
+    cellModelbl->setFixedHeight(10);
 
     //Adding widgets to the right side of the window
     menuSide->addWidget(startBtn,0,0); //addWidget(widget,row,column,rowspan,columnspan,alignment) | First Row
@@ -206,7 +220,9 @@ void CAbase::setupUI(){
     menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
 
     //Adding Widgets to the main windows layout
-    menuSide->addWidget(gameMode,6,0,1,3,Qt::AlignBottom); // Seventh Row
+    menuSide->addWidget(cellModelbl,6,0,1,3); // Seventh Row
+    menuSide->addWidget(cellMode,7,0,1,3); // Eigth Row
+    menuSide->addWidget(gameMode,8,0,1,3,Qt::AlignBottom); // Ninth Row
     mainLayout->addWidget(gameField);
     mainLayout->addLayout(menuSide);
     mainLayout->setAlignment(Qt::AlignTop);
