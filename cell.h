@@ -18,7 +18,9 @@ public:
     void setstate(int status);
     QPoint* getPos();
     int getLiftime();
-    int getStatus();
+    bool isPredator();
+    bool isPrey();
+    bool isFood();
 };
 
 #endif // CELL_H

@@ -22,22 +22,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+SOURCES += main.cpp \
+        cabase.cpp \
+        gameoflife.cpp \
+        gamefield.cpp \
+        snake.cpp \
+        snakeBodyPart.cpp \
+        cell.cpp \
+        predatorvictim.cpp
 
-SOURCES += \
-        main.cpp \
-    gamefield.cpp \
-    gameoflife.cpp \
-    cabase.cpp \
-    snake.cpp \
-    snakeBodyPart.cpp \
-    predatorvictim.cpp \
-    cell.cpp
-
-HEADERS += \
-    gamefield.h \
-    gameoflife.h \
-    cabase.h \
-    snake.h \
-    snakeBodyPart.h \
-    predatorvictim.h \
-    cell.h
+HEADERS += cabase.h \
+        gameoflife.h \
+        gamefield.h \
+        snake.h \
+        snakeBodyPart.h \
+        cell.h \
+        predatorvictim.h

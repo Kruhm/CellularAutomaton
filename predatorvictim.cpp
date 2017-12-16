@@ -1,6 +1,5 @@
 #include "predatorvictim.h"
 
-PredatorVictim::PredatorVictim()
-{
+PredatorVictim::PredatorVictim(){
 
 }
