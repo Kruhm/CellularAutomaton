@@ -22,12 +22,12 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     // initialize options for the game mode combobox
     gameModeList[0] = "Game of Life";
     gameModeList[1] = "Snake";
-    gameModeList[2] = "Predator - Victim";
+    gameModeList[2] = "Predator - Prey";
     gameModeList[3] = "MileStone4";
 
     // initialize options for the cell mode combobox
     cellModeList[0] = "Predator";
-    cellModeList[1] = "Victim";
+    cellModeList[1] = "Prey";
     cellModeList[2] = "Food";
 
     //initialize game objects
@@ -46,12 +46,18 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(clearBtn,SIGNAL(clicked()),this,SLOT(onClearBtnClicked()));
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
+    connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     // timer to update the gamefield every 50ms
     QTimer* updateTimer = new QTimer(this);
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
     updateTimer->start(50);
+
+    QMediaPlayer* player = new QMediaPlayer(this);
+    player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
+    player->setVolume(10);
+    player->play();
 }
 
 CAbase::~CAbase(){
@@ -168,6 +174,16 @@ void CAbase::evolutionChoice(){
     }
 }
 
+void CAbase::onGameModeChanged(){
+    if(gameMode->currentText()==gameModeList[2]){
+        cellModelbl->show();
+        cellMode->show();
+    }else{
+        cellMode->hide();
+        cellModelbl->hide();
+    }
+}
+
 void CAbase::setupUI(){
     //Give buttons text
     startBtn->setText("start");
@@ -218,11 +234,14 @@ void CAbase::setupUI(){
     menuSide->addWidget(universeSize,2,0,1,3); //Third Row
     menuSide->addWidget(gameIntervalLbl,4,0,1,2); //Fifth Row
     menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
-
+    //menuSide->spacerItem(new QSpacerItem);
     //Adding Widgets to the main windows layout
     menuSide->addWidget(cellModelbl,6,0,1,3); // Seventh Row
     menuSide->addWidget(cellMode,7,0,1,3); // Eigth Row
     menuSide->addWidget(gameMode,8,0,1,3,Qt::AlignBottom); // Ninth Row
+
+    cellMode->hide();
+    cellModelbl->hide();
     mainLayout->addWidget(gameField);
     mainLayout->addLayout(menuSide);
     mainLayout->setAlignment(Qt::AlignTop);

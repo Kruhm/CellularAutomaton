@@ -14,6 +14,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QMediaPlayer>
 
 #include "snake.h"
 #include "gameoflife.h"
@@ -61,6 +62,7 @@ public slots:
     void onStartBtnClicked();
     void onPauseBtnClicked();
     void onClearBtnClicked();
+    void onGameModeChanged();
     void onUniverseSizeChanged();
     void onIntervalValueChanged();
 
