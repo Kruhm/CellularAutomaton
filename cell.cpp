@@ -3,7 +3,7 @@
 Cell::Cell(QPoint* pos, int lifetime, int status){
     /*
      * Definition of a Cell for the game Predator - Victim;
-     * Pos -> position of cell
+     * pos -> position of cell
      * lifetime -> lifetime of cell, -1 for infinite lifetime
      * Status -> 1: Predator, 2: Prey, 3: Food
      */

@@ -1,11 +1,12 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent): QGraphicsView(parent){
     /*
      * GraphicsView holding a cellular grid
      */
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
+    this->predatorPrey = pP;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::darkGray);
@@ -19,6 +20,20 @@ GameField::~GameField(){
     delete pen;
     delete bgBrush;
     delete brush;
+}
+
+void GameField::clear(){
+    /*
+     * clears the given scene of any rectangles
+     */
+    this->field->clear();
+}
+
+void GameField::showField(){
+    /*
+     * makes scene visible
+     */
+    this->setScene(field);
 }
 
 void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QPoint* food){
@@ -51,18 +66,16 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
     }
 }
 
-void GameField::clear(){
-    /*
-     * clears the given scene of any rectangles
-     */
-    this->field->clear();
-}
+void GameField::drawPedatorPreyField(const int gameSize){
+    clear();
+    int rectSize = 10;
+    for(int y = 0; y < gameSize; y++){
+        for(int x = 0; x < gameSize; x++){
+            QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
+            //if(predatorPrey)
+        }
 
-void GameField::showField(){
-    /*
-     * makes scene visible
-     */
-    this->setScene(field);
+    }
 }
 
 void GameField::drawGameOfLifeCell(int x, int y, int rectSize, bool cellState){

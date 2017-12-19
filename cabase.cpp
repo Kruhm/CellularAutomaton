@@ -33,9 +33,10 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snake = new Snake(50);  // dim for placing food
+    predatorPrey = new PredatorVictim(50);
 
     // initialize grid
-    gameField = new GameField(gameOfLife);
+    gameField = new GameField(gameOfLife, predatorPrey);
 
     //setup UI
     this->setupUI();

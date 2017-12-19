@@ -18,6 +18,7 @@
 
 #include "snake.h"
 #include "gameoflife.h"
+#include "predatorvictim.h"
 #include "gamefield.h"
 
 class CAbase : public QWidget{
@@ -29,6 +30,7 @@ private:
     //Gamesses
     GameOfLife* gameOfLife;
     Snake* snake;
+    PredatorVictim* predatorPrey;
     //Layouts
     QHBoxLayout* mainLayout;
     QGridLayout* menuSide;

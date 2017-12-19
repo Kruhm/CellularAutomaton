@@ -3,6 +3,7 @@
 
 #include "gameoflife.h"
 #include "snakeBodyPart.h"
+#include "predatorvictim.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -18,14 +19,16 @@ class GameField : public QGraphicsView{
 private:
     QGraphicsScene* field;
     GameOfLife* gameOfLife;
+    PredatorVictim* predatorPrey;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
 public:
-    GameField(GameOfLife* gol, QGraphicsView *parent = 0);
+    GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent = 0);
     ~GameField();
     void drawSnakeField(int gameSize, SnakeBodyPart* snakeTail, QPoint* food);
     void drawGameOfLifeCell(int x,int y, int rectSize, bool cellState);
+    void drawPedatorPreyField(int gameSize);
     void clear();
     void showField();
 private slots:

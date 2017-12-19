@@ -159,6 +159,7 @@ bool GameOfLife::apply_rules(const int x, const int y) {
     } else if (!getCellState(x, y) && amountOfNeighbours == 3) { // 3 neighbors reproduced
         return true;
     }
+    return false;
 }
 
 bool GameOfLife::getCellState(const int x, const int y) {

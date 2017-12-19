@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/sounds">
-        <file>moneyisland.m4a</file>
         <file>moneyisland.mp3</file>
     </qresource>
 </RCC>
