@@ -67,12 +67,31 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
 }
 
 void GameField::drawPedatorPreyField(const int gameSize){
+    /*
+     * Draws the field for the Game Predator - Prey
+     * Green -> Food Cell
+     * Red -> Predator Cell
+     * Yellow -> Prey Cell
+     * otherwise -> Dead Cell
+     */
     clear();
     int rectSize = 10;
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
-            //if(predatorPrey)
+            if(predatorPrey->getCell(x,y).isFood()){
+                brush->setColor(Qt::green);
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }else if(predatorPrey->getCell(x,y).isPrey()){
+                brush->setColor(Qt::yellow);
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }else if(predatorPrey->getCell(x,y).isPredator()){
+                brush->setColor(Qt::red);
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }else{
+                brush->setColor(Qt::white);
+                this->field->addRect(rect,*pen,*brush); //add rect to the board
+            }
         }
 
     }

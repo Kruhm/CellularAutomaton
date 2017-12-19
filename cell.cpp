@@ -1,5 +1,14 @@
 #include "cell.h"
 
+Cell::Cell(QPoint* pos){
+    /*
+     * Definition of a dead Cell
+     */
+    this->pos = pos;
+    this->lifetime = -2;
+    this->status = 4;
+}
+
 Cell::Cell(QPoint* pos, int lifetime, int status){
     /*
      * Definition of a Cell for the game Predator - Victim;

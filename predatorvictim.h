@@ -16,6 +16,8 @@ private:
 public:
     PredatorVictim(int gameSize);
     void createRandomGame();
+    void fillField();
+    Cell getCell(int x, int y);
 };
 
 #endif // PREDATORVICTIM_H

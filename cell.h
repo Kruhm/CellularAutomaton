@@ -11,6 +11,7 @@ private:
     int status;
 
 public:
+    Cell(QPoint *pos);
     Cell(QPoint* pos, int lifetime, int status);
 
     void setPos(QPoint* pos);

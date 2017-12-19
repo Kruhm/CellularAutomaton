@@ -26,9 +26,9 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     gameModeList[3] = "MileStone4";
 
     // initialize options for the cell mode combobox
-    cellModeList[0] = "Predator";
-    cellModeList[1] = "Prey";
-    cellModeList[2] = "Food";
+    cellModeList[0] = "Predator - Red";
+    cellModeList[1] = "Prey - Yellow";
+    cellModeList[2] = "Food - Green";
 
     //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
@@ -55,10 +55,10 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
     updateTimer->start(50);
 
-    QMediaPlayer* player = new QMediaPlayer(this);
-    player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
-    player->setVolume(10);
-    player->play();
+    //QMediaPlayer* player = new QMediaPlayer(this);
+    //player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
+    //player->setVolume(10);
+    //player->play();
 }
 
 CAbase::~CAbase(){
@@ -75,7 +75,9 @@ void CAbase::paintEvent(QPaintEvent *event){
      */
     gameField->clear(); //emptying field
     int dim = universeSize->value();
-    if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
+    if(gameMode->currentText()==gameModeList[2]){
+        gameField->drawPedatorPreyField(dim);
+    }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
         gameField->drawSnakeField(dim,snake->getTail(),snake->getFood()); // draw board for the snake game
     }else{  // Mode => Game of Life
         for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
