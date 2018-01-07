@@ -68,6 +68,30 @@ CAbase::~CAbase(){
     delete gameField;
 }
 
+void CAbase::evolutionChoice(){
+    /*
+     *  decides which game should be progressing, based on the game mode SpinBox
+     */
+    if(gameMode->currentText() == gameModeList[2]){     // If PredatorPrey
+        predatorPrey->moveCell();
+        predatorPrey->uncheckCells();
+        qDebug() << "new move";
+    }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
+        int dim = universeSize->value();
+        snake->setMovedOnTick(false);   // new tick new direction possible
+        snake->eat();       // checks for food
+        snake->move(dim);   // move snake body
+        if(snake->collision(dim)){  // if snake collides
+            timer->stop();
+            snake->die();   // open dying message
+        }
+    }else{                                          //Else game of Life
+        if(!gameOfLife->isRunning()){   // if the thread isn't currently running
+            gameOfLife->start();    // start the GoL thread
+        }
+    }
+}
+
 void CAbase::paintEvent(QPaintEvent *event){
     /*
      * Draws the grid on the left side of the Window.
@@ -110,12 +134,12 @@ void CAbase::onStartBtnClicked(){
     /*
      * Starts the GameOfLife Thread with the given interval
      */
-    if(gameMode->currentText() == gameModeList[1]){ //If snake
-        timer->start(gameInterval->value());
-    }else{                                          //Else Game of Life
+    if(gameMode->currentText() == gameModeList[0]){ //Game of Life
         gameOfLife->setDoEvolution(true); // makes evolution in Game of Life possible
         gameOfLife->start();
         timer->start(50);
+    }else{                                          //If other game
+        timer->start(gameInterval->value());
     }
 }
 
@@ -157,26 +181,6 @@ void CAbase::onIntervalValueChanged(){
 
 }
 
-void CAbase::evolutionChoice(){
-    /*
-     *  decides which game should be progressing, based on the game mode SpinBox
-     */
-    if(gameMode->currentText()==gameModeList[1]){   // If Snake
-        int dim = universeSize->value();
-        snake->setMovedOnTick(false);   // new tick new direction possible
-        snake->eat();       // checks for food
-        snake->move(dim);   // move snake body
-        if(snake->collision(dim)){  // if snake collides
-            timer->stop();
-            snake->die();   // open dying message
-        }
-    }else{                                          //Else game of Life
-        if(!gameOfLife->isRunning()){   // if the thread isn't currently running
-            gameOfLife->start();    // start the GoL thread
-        }
-    }
-}
-
 void CAbase::onGameModeChanged(){
     if(gameMode->currentText()==gameModeList[2]){
         cellModelbl->show();
@@ -211,7 +215,7 @@ void CAbase::setupUI(){
 
     //set SpinBoxes initial Values
     universeSize->setValue(50);
-    gameInterval->setValue(500);
+    gameInterval->setValue(100);
 
     //Add game mode tabs to ComboBox
     gameMode->addItem(gameModeList[0]);

@@ -4,6 +4,7 @@
 #include <ctime>
 #include <vector>
 #include <random>
+#include <QDebug>
 #include "cell.h"
 
 using namespace std;
@@ -17,7 +18,10 @@ public:
     PredatorVictim(int gameSize);
     void createRandomGame();
     void fillField();
+    void moveCell();
+    void uncheckCells();
     Cell getCell(int x, int y);
+    void setCell(Cell newCell);
 };
 
 #endif // PREDATORVICTIM_H

@@ -7,6 +7,7 @@ Cell::Cell(QPoint* pos){
     this->pos = pos;
     this->lifetime = -2;
     this->status = 4;
+    this->checked = false;
 }
 
 Cell::Cell(QPoint* pos, int lifetime, int status){
@@ -19,6 +20,7 @@ Cell::Cell(QPoint* pos, int lifetime, int status){
     this->pos = pos;
     this->lifetime = lifetime;
     this->status = status;
+    this->checked = false;
 }
 
 void Cell::setPos(QPoint *pos){
@@ -33,12 +35,20 @@ void Cell::setstate(int status){
     this->status = status;
 }
 
+void Cell::setChecked(bool checked){
+    this->checked = checked;
+}
+
 QPoint *Cell::getPos(){
     return pos;
 }
 
 int Cell::getLiftime(){
     return lifetime;
+}
+
+bool Cell::isChecked(){
+    return checked;
 }
 
 bool Cell::isPredator(){

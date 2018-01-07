@@ -9,7 +9,7 @@ private:
     QPoint* pos;
     int lifetime;
     int status;
-
+    bool checked;
 public:
     Cell(QPoint *pos);
     Cell(QPoint* pos, int lifetime, int status);
@@ -17,8 +17,10 @@ public:
     void setPos(QPoint* pos);
     void setLiftime(int lifetime);
     void setstate(int status);
+    void setChecked(bool checked);
     QPoint* getPos();
     int getLiftime();
+    bool isChecked();
     bool isPredator();
     bool isPrey();
     bool isFood();
