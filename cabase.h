@@ -67,7 +67,7 @@ public slots:
     void onPauseBtnClicked();
     void onClearBtnClicked();
     void onGameModeChanged();
-    void onLifetimeChanged();
+    void onLifetimeValueChanged();
     void onUniverseSizeChanged();
     void onIntervalValueChanged();
 

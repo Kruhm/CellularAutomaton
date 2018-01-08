@@ -50,7 +50,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
-    connect(lifetime,SIGNAL(valueChanged(int)),this,SLOT(onLifeTimeChanged));
+    connect(lifetime,SIGNAL(valueChanged(int)),this,SLOT(onLifetimeValueChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     // timer to update the gamefield every 50ms
@@ -110,7 +110,7 @@ void CAbase::paintEvent(QPaintEvent *event){
             gameField->drawGameOfLifeCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
         }
     }
-     gameField->showField(); // make board visible
+    gameField->showField(); // make board visible
 }
 
 void CAbase::keyPressEvent(QKeyEvent *e){
@@ -163,7 +163,7 @@ void CAbase::onClearBtnClicked(){
     predatorPrey->clearField();
 }
 
-void CAbase::onLifetimeChanged(){
+void CAbase::onLifetimeValueChanged(){
     predatorPrey->setMaxLifetime(lifetime->value());
 }
 
@@ -181,9 +181,7 @@ void CAbase::onIntervalValueChanged(){
     /*
      * changes the refresh rate of the evolution done by the GameOfLife object
      */
-    if(gameMode->currentText() == gameModeList[1]){ // If Snake
-        timer->setInterval(gameInterval->value());
-    }                                               // Game of Life
+    timer->setInterval(gameInterval->value());
     gameOfLife->setSleepTime(gameInterval->value());
 
 }
@@ -195,6 +193,7 @@ void CAbase::onGameModeChanged(){
         cellMode->show();
         lifetimeLbl->show();
         lifetime->show();
+
     }else{
         cellMode->hide();
         cellModelbl->hide();
