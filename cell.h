@@ -21,6 +21,7 @@ public:
     QPoint* getPos();
     int getLiftime();
     bool isChecked();
+    bool isDead();
     bool isPredator();
     bool isPrey();
     bool isFood();

@@ -215,7 +215,7 @@ void CAbase::setupUI(){
 
     //set SpinBoxes initial Values
     universeSize->setValue(50);
-    gameInterval->setValue(100);
+    gameInterval->setValue(500);
 
     //Add game mode tabs to ComboBox
     gameMode->addItem(gameModeList[0]);

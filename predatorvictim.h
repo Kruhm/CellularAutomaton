@@ -20,6 +20,9 @@ public:
     void fillField();
     void moveCell();
     void uncheckCells();
+    void preyMovement(Cell currentCell);
+    void predatorMovement(Cell currentCell);
+    void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
     Cell getCell(int x, int y);
     void setCell(Cell newCell);
 };

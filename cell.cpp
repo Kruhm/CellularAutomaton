@@ -63,4 +63,7 @@ bool Cell::isFood(){
     return status == 3;
 }
 
+bool Cell::isDead(){
+    return status == 4;
+}
 
