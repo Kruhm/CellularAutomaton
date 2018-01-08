@@ -66,12 +66,6 @@ void PredatorVictim::moveCell(){
                 } else if(currentCell.isPrey()){
                     preyMovement(currentCell);
                 }
-                qDebug() << "Lifetime before " << currentCell.getLiftime();
-                currentCell.decrementLifetime();
-                if(currentCell.lostItsLife()){
-                    cellDies(x,y);
-                }
-                qDebug() << "Lifetime after " << currentCell.getLiftime();
             }
         }
     } // end top for
@@ -146,12 +140,16 @@ void PredatorVictim::moveToNewCell(Cell currentCell, vector<vector<int>> nourish
     } else {
         moves = false;
     }
+    currentCell.decrementLifetime();
     if(moves){
         QPoint* newPos = new QPoint(newX, newY);
         currentCell.setPos(newPos);
         currentCell.setChecked(true);
         setCell(Cell(new QPoint(x,y)));
         setCell(currentCell);
+    }
+    if(currentCell.lostItsLife()){
+        cellDies(newX,newY);
     }
 }
 
