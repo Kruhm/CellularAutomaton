@@ -11,8 +11,10 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     universeSizeLbl = new QLabel(this);
     gameIntervalLbl = new QLabel(this);
     cellModelbl = new QLabel(this);
+    lifetimeLbl = new QLabel(this);
     universeSize = new QSpinBox(this);
     gameInterval = new QSpinBox(this);
+    lifetime = new QSpinBox(this);
     gameMode = new QComboBox(this);
     cellMode = new QComboBox(this);
     startBtn = new QPushButton(this);
@@ -33,7 +35,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
     snake = new Snake(50);  // dim for placing food
-    predatorPrey = new PredatorVictim(50);
+    predatorPrey = new PredatorVictim(50,25);
 
     // initialize grid
     gameField = new GameField(gameOfLife, predatorPrey);
@@ -48,6 +50,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
+    connect(lifetime,SIGNAL(valueChanged(int)),this,SLOT(onLifeTimeChanged));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     // timer to update the gamefield every 50ms
@@ -75,7 +78,6 @@ void CAbase::evolutionChoice(){
     if(gameMode->currentText() == gameModeList[2]){     // If PredatorPrey
         predatorPrey->moveCell();
         predatorPrey->uncheckCells();
-        qDebug() << "new move";
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
         int dim = universeSize->value();
         snake->setMovedOnTick(false);   // new tick new direction possible
@@ -160,6 +162,10 @@ void CAbase::onClearBtnClicked(){
     snake->reset();
 }
 
+void CAbase::onLifetimeChanged(){
+    predatorPrey->setMaxLifetime(lifetime->value());
+}
+
 void CAbase::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
@@ -183,11 +189,16 @@ void CAbase::onIntervalValueChanged(){
 
 void CAbase::onGameModeChanged(){
     if(gameMode->currentText()==gameModeList[2]){
+        predatorPrey->createRandomGame();
         cellModelbl->show();
         cellMode->show();
+        lifetimeLbl->show();
+        lifetime->show();
     }else{
         cellMode->hide();
         cellModelbl->hide();
+        lifetimeLbl->hide();
+        lifetime->hide();
     }
 }
 
@@ -201,19 +212,24 @@ void CAbase::setupUI(){
     universeSizeLbl->setText("Universe Size  (10 - 100)");
     gameIntervalLbl->setText("Generation Interval (100-10000)");
     cellModelbl->setText("Cell Mode");
+    lifetimeLbl->setText("Lifetime");
 
     //set boundaries of SpinBoxes
     gameInterval->setMaximum(10000);
     universeSize->setMaximum(100);
     gameInterval->setMinimum(100);
     universeSize->setMinimum(10);
+    lifetime->setMaximum(100);
+    lifetime->setMinimum(10);
     gameInterval->setSingleStep(50);
 
     //set SpinBoxes suffixes
     universeSize->setSuffix(" cells");
     gameInterval->setSuffix(" ms");
+    lifetime->setSuffix(" HP");
 
     //set SpinBoxes initial Values
+    lifetime->setValue(25);
     universeSize->setValue(50);
     gameInterval->setValue(500);
 
@@ -232,6 +248,7 @@ void CAbase::setupUI(){
     universeSizeLbl->setFixedHeight(10);
     gameIntervalLbl->setFixedHeight(10);
     cellModelbl->setFixedHeight(10);
+    lifetimeLbl->setFixedHeight(10);
 
     //Adding widgets to the right side of the window
     menuSide->addWidget(startBtn,0,0); //addWidget(widget,row,column,rowspan,columnspan,alignment) | First Row
@@ -245,10 +262,14 @@ void CAbase::setupUI(){
     //Adding Widgets to the main windows layout
     menuSide->addWidget(cellModelbl,6,0,1,3); // Seventh Row
     menuSide->addWidget(cellMode,7,0,1,3); // Eigth Row
-    menuSide->addWidget(gameMode,8,0,1,3,Qt::AlignBottom); // Ninth Row
+    menuSide->addWidget(lifetimeLbl,8,0,1,3); // ninth Row
+    menuSide->addWidget(lifetime,9,0,1,3); // tenth Row
+    menuSide->addWidget(gameMode,10,0,1,3,Qt::AlignBottom); // eleventh Row
 
     cellMode->hide();
     cellModelbl->hide();
+    lifetime->hide();
+    lifetimeLbl->hide();
     mainLayout->addWidget(gameField);
     mainLayout->addLayout(menuSide);
     mainLayout->setAlignment(Qt::AlignTop);

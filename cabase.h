@@ -39,10 +39,12 @@ private:
     QLabel* universeSizeLbl;
     QLabel* gameIntervalLbl;
     QLabel* cellModelbl;
+    QLabel* lifetimeLbl;
 
     //SpinBoxes
     QSpinBox* universeSize;
     QSpinBox* gameInterval;
+    QSpinBox* lifetime;
 
     //ComboBox and its content
     QComboBox* cellMode;
@@ -65,6 +67,7 @@ public slots:
     void onPauseBtnClicked();
     void onClearBtnClicked();
     void onGameModeChanged();
+    void onLifetimeChanged();
     void onUniverseSizeChanged();
     void onIntervalValueChanged();
 

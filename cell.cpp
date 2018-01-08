@@ -23,6 +23,14 @@ Cell::Cell(QPoint* pos, int lifetime, int status){
     this->checked = false;
 }
 
+void Cell::decrementLifetime(){
+    this->lifetime--;
+}
+
+bool Cell::lostItsLife(){
+    return lifetime <= 0;
+}
+
 void Cell::setPos(QPoint *pos){
     this->pos = pos;
 }
