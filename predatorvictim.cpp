@@ -4,20 +4,19 @@ PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
     field.reserve(gameSize*gameSize); // allocate memory to fit the field size
     this->gameSize = gameSize;
     this->maxLifetime = lifetime;
-    fillField();
-}
-
-void PredatorVictim::fillField(){
-    for(int y = 0; y < gameSize; y++){
-        for(int x = 0; x < gameSize; x++){
-            Cell deadCell(new QPoint(x,y));
-            field.push_back(deadCell);
-        }
-    }
+    clearField();
 }
 
 void PredatorVictim::clearField(){
-    field.clear();
+    vector<Cell> newField;
+    newField.reserve(gameSize*gameSize);
+    for(int y = 0; y < gameSize; y++){
+        for(int x = 0; x < gameSize; x++){
+            Cell deadCell(new QPoint(x,y));
+            newField.push_back(deadCell);
+        }
+    }
+    field = newField;
 }
 
 void PredatorVictim::createRandomGame(){

@@ -18,7 +18,6 @@ private:
 public:
     PredatorVictim(int gameSize, int maxLifetime);
     void createRandomGame();
-    void fillField();
     void cellDies(int x, int y);
     void moveCell();
     void uncheckCells();

@@ -19,7 +19,6 @@ class GameField : public QGraphicsView{
 private:
     QGraphicsScene* field;
     GameOfLife* gameOfLife;
-    PredatorVictim* predatorPrey;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
@@ -28,7 +27,7 @@ public:
     ~GameField();
     void drawSnakeField(int gameSize, SnakeBodyPart* snakeTail, QPoint* food);
     void drawGameOfLifeCell(int x,int y, int rectSize, bool cellState);
-    void drawPedatorPreyField(int gameSize);
+    void drawPedatorPreyField(int gameSize, PredatorVictim* predatorPrey);
     void clear();
     void showField();
 private slots:

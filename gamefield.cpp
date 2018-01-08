@@ -6,7 +6,6 @@ GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent)
      */
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
-    this->predatorPrey = pP;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::darkGray);
@@ -66,7 +65,7 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
     }
 }
 
-void GameField::drawPedatorPreyField(const int gameSize){
+void GameField::drawPedatorPreyField(const int gameSize, PredatorVictim* predatorPrey){
     /*
      * Draws the field for the Game Predator - Prey
      * Green -> Food Cell
@@ -74,7 +73,6 @@ void GameField::drawPedatorPreyField(const int gameSize){
      * Yellow -> Prey Cell
      * otherwise -> Dead Cell
      */
-    clear();
     int rectSize = 10;
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){

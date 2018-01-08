@@ -102,7 +102,7 @@ void CAbase::paintEvent(QPaintEvent *event){
     gameField->clear(); //emptying field
     int dim = universeSize->value();
     if(gameMode->currentText()==gameModeList[2]){
-        gameField->drawPedatorPreyField(dim);
+        gameField->drawPedatorPreyField(dim, predatorPrey);
     }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
         gameField->drawSnakeField(dim,snake->getTail(),snake->getFood()); // draw board for the snake game
     }else{  // Mode => Game of Life
@@ -160,6 +160,7 @@ void CAbase::onClearBtnClicked(){
     timer->stop();
     gameOfLife->wipe();
     snake->reset();
+    predatorPrey->clearField();
 }
 
 void CAbase::onLifetimeChanged(){
