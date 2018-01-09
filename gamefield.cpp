@@ -134,6 +134,7 @@ void GameField::mousePressEvent(QMouseEvent *e){
     QPointF relativeOrigin = mapToScene(origin);    // map x,y to the current board
     int x = relativeOrigin.x()/10; // pixel to column
     int y = relativeOrigin.y()/10; // pixel to row
+    if(x < 0 || y < 0 || x > predatorPrey->getGamesize() || y > predatorPrey->getGamesize()){return;}
     if(this->currentGameMode == 1){
         if(currentCellMode < 4){
             predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));

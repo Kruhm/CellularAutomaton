@@ -31,6 +31,7 @@ public:
     void clearField();
     bool finish(bool endText=true);
     int getMaxLifetime();
+    void setGameSize(int gm);
     int getGamesize();
     Cell getCell(int x, int y);
     void setCell(Cell newCell);

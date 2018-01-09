@@ -181,6 +181,8 @@ void CAbase::onUniverseSizeChanged(){
      */
     timer->stop();
     gameOfLife->setSize(universeSize->value());
+    predatorPrey->setGameSize(universeSize->value());
+    predatorPrey->createRandomGame();
     snake->reset();
     snake->spawnFood(universeSize->value());
 }
@@ -281,7 +283,7 @@ void CAbase::setupUI(){
     menuSide->addWidget(universeSize,2,0,1,3); //Third Row
     menuSide->addWidget(gameIntervalLbl,4,0,1,2); //Fifth Row
     menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
-    //menuSide->spacerItem(new QSpacerItem);
+
     //Adding Widgets to the main windows layout
     menuSide->addWidget(cellModelbl,6,0,1,3); // Seventh Row
     menuSide->addWidget(cellMode,7,0,1,3); // Eigth Row

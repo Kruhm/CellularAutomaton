@@ -212,3 +212,7 @@ int PredatorVictim::getMaxLifetime(){
 int PredatorVictim::getGamesize(){
     return this->gameSize;
 }
+
+void PredatorVictim::setGameSize(int gm){
+    this->gameSize = gm;
+}
