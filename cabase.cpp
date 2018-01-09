@@ -185,6 +185,7 @@ void CAbase::onUniverseSizeChanged(){
     /*
      * Wipes the board and changes the universe size
      */
+    if(universeSize->value()<10 || universeSize->value() > 100){return;}
     timer->stop();
     gameOfLife->setSize(universeSize->value());
     predatorPrey->setGameSize(universeSize->value());
@@ -262,7 +263,7 @@ void CAbase::setupUI(){
     //set SpinBoxes initial Values
     lifetime->setValue(25);
     universeSize->setValue(50);
-    gameInterval->setValue(500);
+    gameInterval->setValue(100);
 
     //Add lasdna
     cellMode->addItem(cellModeList[0]);

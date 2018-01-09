@@ -4,9 +4,6 @@ PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
     field.reserve(gameSize*gameSize); // allocate memory to fit the field size
     this->gameSize = gameSize;
     this->maxLifetime = lifetime;
-    this->amountOfPredators = 25;
-    this->amountOfFood = 100;
-    this->amountOfPrey = 75;
     clearField();
 }
 
@@ -50,6 +47,9 @@ bool PredatorVictim::finish(bool endText){
 void PredatorVictim::createRandomGame(){
     clearField();
     int dim = gameSize;
+    this->amountOfPredators = (gameSize*gameSize)*0.01;
+    this->amountOfFood = (gameSize*gameSize)*0.1;
+    this->amountOfPrey = (gameSize*gameSize)*0.05;
     srand((int) time(0));
     int foodIdx = 0;
     while(foodIdx < this->amountOfFood){
