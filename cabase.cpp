@@ -20,6 +20,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     startBtn = new QPushButton(this);
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
+    newGameBtn = new QPushButton(this);
 
     // initialize options for the game mode combobox
     gameModeList[0] = "Game of Life";
@@ -48,6 +49,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
     connect(stopBtn,SIGNAL(clicked()),this,SLOT(onPauseBtnClicked()));
     connect(clearBtn,SIGNAL(clicked()),this,SLOT(onClearBtnClicked()));
+    connect(newGameBtn,SIGNAL(clicked(bool)),this,SLOT(onNewGameBtnClicked()));
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
@@ -170,9 +172,13 @@ void CAbase::onClearBtnClicked(){
     predatorPrey->clearField();
 }
 
-void CAbase::onLifetimeValueChanged(){
-    if(predatorPrey->finish(false))
-        predatorPrey->setMaxLifetime(lifetime->value());
+void CAbase::onNewGameBtnClicked(){
+    timer->stop();
+    gameOfLife->wipe();
+    gameOfLife->createGlider();
+    snake->reset();
+    predatorPrey->setMaxLifetime(lifetime->value());
+    predatorPrey->createRandomGame();
 }
 
 void CAbase::onUniverseSizeChanged(){
@@ -231,6 +237,7 @@ void CAbase::setupUI(){
     startBtn->setText("start");
     stopBtn->setText("pause");
     clearBtn->setText("clear");
+    newGameBtn->setText("new game");
 
     //Give labels text    QPushButton* changeSizeBtn;
     universeSizeLbl->setText("Universe Size  (10 - 100)");
@@ -279,17 +286,18 @@ void CAbase::setupUI(){
     menuSide->addWidget(startBtn,0,0); //addWidget(widget,row,column,rowspan,columnspan,alignment) | First Row
     menuSide->addWidget(stopBtn,0,1);
     menuSide->addWidget(clearBtn,0,2);
-    menuSide->addWidget(universeSizeLbl,1,0,1,3); // Second Row
-    menuSide->addWidget(universeSize,2,0,1,3); //Third Row
+    menuSide->addWidget(newGameBtn,0,3);
+    menuSide->addWidget(universeSizeLbl,1,0,1,4); // Second Row
+    menuSide->addWidget(universeSize,2,0,1,4); //Third Row
     menuSide->addWidget(gameIntervalLbl,4,0,1,2); //Fifth Row
-    menuSide->addWidget(gameInterval,5,0,1,3); //Sixth Row
+    menuSide->addWidget(gameInterval,5,0,1,4); //Sixth Row
 
     //Adding Widgets to the main windows layout
-    menuSide->addWidget(cellModelbl,6,0,1,3); // Seventh Row
-    menuSide->addWidget(cellMode,7,0,1,3); // Eigth Row
-    menuSide->addWidget(lifetimeLbl,8,0,1,3); // ninth Row
-    menuSide->addWidget(lifetime,9,0,1,3); // tenth Row
-    menuSide->addWidget(gameMode,10,0,1,3,Qt::AlignBottom); // eleventh Row
+    menuSide->addWidget(cellModelbl,6,0,1,4); // Seventh Row
+    menuSide->addWidget(cellMode,7,0,1,4); // Eigth Row
+    menuSide->addWidget(lifetimeLbl,8,0,1,4); // ninth Row
+    menuSide->addWidget(lifetime,9,0,1,4); // tenth Row
+    menuSide->addWidget(gameMode,10,0,1,4,Qt::AlignBottom); // eleventh Row
 
     cellMode->hide();
     cellModelbl->hide();

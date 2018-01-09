@@ -55,22 +55,23 @@ private:
     QPushButton* startBtn;
     QPushButton* stopBtn;
     QPushButton* clearBtn;
+    QPushButton* newGameBtn;
 
     //gameField
     GameField* gameField;
 
 public slots:
-    void paintEvent(QPaintEvent *event);
-    void keyPressEvent(QKeyEvent *e);
     void evolutionChoice();
     void onStartBtnClicked();
     void onPauseBtnClicked();
     void onClearBtnClicked();
     void onGameModeChanged();
-    void onLifetimeValueChanged();
-    void onCellModeValueChanged();
+    void onNewGameBtnClicked();
     void onUniverseSizeChanged();
+    void onCellModeValueChanged();
     void onIntervalValueChanged();
+    void keyPressEvent(QKeyEvent *e);
+    void paintEvent(QPaintEvent *event);
 
 public:
     CAbase(QWidget *parent = 0);
