@@ -4,6 +4,7 @@ GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent)
     /*
      * GraphicsView holding a cellular grid
      * GameMode 1: Game of Life | 2: Predator Prey
+     * CellMode 1: Predator | 2: Prey | 3: Food | 4: Dead
      */
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
@@ -138,6 +139,11 @@ void GameField::mousePressEvent(QMouseEvent *e){
     if(this->currentGameMode == 1){
         if(currentCellMode < 4){
             predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));
+            if(currentCellMode == 1){
+                predatorPrey->incrementPredatorCount();
+            }else if(currentCellMode == 2){
+                predatorPrey->incrementPreyCount();
+            }
         }else{
             predatorPrey->setCell(Cell(new QPoint(x,y)));
         }

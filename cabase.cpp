@@ -53,7 +53,6 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(universeSize,SIGNAL(valueChanged(int)),this,SLOT(onUniverseSizeChanged()));
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
-    connect(lifetime,SIGNAL(valueChanged(int)),this,SLOT(onLifetimeValueChanged()));
     connect(cellMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onCellModeValueChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 

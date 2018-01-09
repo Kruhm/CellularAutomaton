@@ -28,7 +28,7 @@ void Cell::decrementLifetime(){
 }
 
 bool Cell::lostItsLife(){
-    return lifetime <= 0;
+    return lifetime == 0;
 }
 
 void Cell::setPos(QPoint *pos){

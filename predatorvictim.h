@@ -33,6 +33,8 @@ public:
     int getMaxLifetime();
     void setGameSize(int gm);
     int getGamesize();
+    void incrementPreyCount();
+    void incrementPredatorCount();
     Cell getCell(int x, int y);
     void setCell(Cell newCell);
     void setMaxLifetime(int maxLifetime);

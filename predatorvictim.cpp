@@ -19,22 +19,21 @@ void PredatorVictim::clearField(){
     field = newField;
 }
 
+void PredatorVictim::incrementPredatorCount(){
+    this->amountOfPredators++;
+}
+
+void PredatorVictim::incrementPreyCount(){
+    this->amountOfPrey++;
+}
+
 bool PredatorVictim::finish(bool endText){
     QMessageBox msg;
-    int countPrey = 0;
-    int countPred = 0;
-    for(int i = 0; i < field.size();i++){
-        if(field[i].isPrey()){
-            countPrey++;
-        }else if(field[i].isPredator()){
-            countPred++;
-        }
-    }
-    if((countPrey + countPred) == 0){
-        msg.setText("Draw... Neither Predator or Prey have won!");
-    } else if(countPrey == 0){
+    if((amountOfPrey + amountOfPredators) == 0){
+        msg.setText("Draw... Neither Predator nor Prey have won!");
+    } else if(amountOfPrey == 0){
         msg.setText("Predators win, long live the Predators!");
-    } else if(countPred == 0){
+    } else if(amountOfPredators == 0){
         msg.setText("The Prey has won, shall they never be eaten again");
     } else{
         return false;
@@ -70,18 +69,22 @@ void PredatorVictim::createRandomGame(){
         preyIdx++;
     }
 
-    int pred = 0;
-    while(pred < this->amountOfPredators){
+    int predIdx = 0;
+    while(predIdx < this->amountOfPredators){
         int predatorX = rand() % dim;
         int predatorY = rand() % dim;
         if(!field[predatorY*gameSize+predatorX].isDead()) {continue;}
         Cell predator(new QPoint(predatorX,predatorY),maxLifetime,1);
         field[predatorY*gameSize+predatorX] = predator;
-        pred++;
+        predIdx++;
     }
 }
 
 void PredatorVictim::cellDies(int x, int y){
+    if(field[y * gameSize + x].isPredator())
+        amountOfPredators--;
+    else if(field[y * gameSize + x].isPrey())
+        amountOfPrey--;
     field[y * gameSize + x] = Cell(new QPoint(x,y));
 }
 
@@ -160,6 +163,7 @@ void PredatorVictim::moveToNewCell(Cell currentCell, vector<vector<int>> nourish
     int newY = 0;
     bool moves = true;
     if(!nourishment.empty()){
+        if(currentCell.isPredator()) amountOfPrey--;
         int relFoodPosIndex = rand() % nourishment.size();
         newX = x + nourishment[relFoodPosIndex][0];
         newY = y + nourishment[relFoodPosIndex][1];
