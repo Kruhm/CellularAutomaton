@@ -22,7 +22,7 @@ void PredatorVictim::clearField(){
     field = newField;
 }
 
-bool PredatorVictim::finish(){
+bool PredatorVictim::finish(bool endText){
     QMessageBox msg;
     int countPrey = 0;
     int countPred = 0;
@@ -42,7 +42,8 @@ bool PredatorVictim::finish(){
     } else{
         return false;
     }
-    msg.exec();
+    if(endText)
+        msg.exec();
     return true;
 }
 
@@ -206,4 +207,8 @@ void PredatorVictim::setMaxLifetime(int maxLifetime){
 
 int PredatorVictim::getMaxLifetime(){
     return this->maxLifetime;
+}
+
+int PredatorVictim::getGamesize(){
+    return this->gameSize;
 }

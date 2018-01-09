@@ -49,7 +49,7 @@ private:
     //ComboBox and its content
     QComboBox* cellMode;
     QComboBox* gameMode;
-    QString cellModeList[3];
+    QString cellModeList[4];
     QString gameModeList[4];
     //Buttons
     QPushButton* startBtn;
@@ -68,6 +68,7 @@ public slots:
     void onClearBtnClicked();
     void onGameModeChanged();
     void onLifetimeValueChanged();
+    void onCellModeValueChanged();
     void onUniverseSizeChanged();
     void onIntervalValueChanged();
 

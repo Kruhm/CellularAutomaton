@@ -31,6 +31,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     cellModeList[0] = "Predator - Red";
     cellModeList[1] = "Prey - Yellow";
     cellModeList[2] = "Food - Green";
+    cellModeList[3] = "Dead - White";
 
     //initialize game objects
     gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
@@ -51,6 +52,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
     connect(lifetime,SIGNAL(valueChanged(int)),this,SLOT(onLifetimeValueChanged()));
+    connect(cellMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onCellModeValueChanged()));
     connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
 
     // timer to update the gamefield every 50ms
@@ -80,6 +82,7 @@ void CAbase::evolutionChoice(){
         predatorPrey->uncheckCells();
         if(predatorPrey->finish()){
             timer->stop();
+            predatorPrey->setMaxLifetime(lifetime->value());
             predatorPrey->createRandomGame();
         }
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
@@ -168,7 +171,8 @@ void CAbase::onClearBtnClicked(){
 }
 
 void CAbase::onLifetimeValueChanged(){
-    predatorPrey->setMaxLifetime(lifetime->value());
+    if(predatorPrey->finish(false))
+        predatorPrey->setMaxLifetime(lifetime->value());
 }
 
 void CAbase::onUniverseSizeChanged(){
@@ -192,17 +196,31 @@ void CAbase::onIntervalValueChanged(){
 
 void CAbase::onGameModeChanged(){
     if(gameMode->currentText()==gameModeList[2]){
+        gameField->setCurrentGameMode(1);
         predatorPrey->createRandomGame();
         cellModelbl->show();
         cellMode->show();
         lifetimeLbl->show();
         lifetime->show();
+        return;
+    }else if(gameMode->currentText()==gameModeList[0]){
+        gameField->setCurrentGameMode(0);
+    }
+    cellMode->hide();
+    cellModelbl->hide();
+    lifetimeLbl->hide();
+    lifetime->hide();
+}
 
-    }else{
-        cellMode->hide();
-        cellModelbl->hide();
-        lifetimeLbl->hide();
-        lifetime->hide();
+void CAbase::onCellModeValueChanged(){
+    if(cellMode->currentText() == cellModeList[0]){
+        gameField->setCurrentCellMode(1);
+    }else if(cellMode->currentText() == cellModeList[1]){
+        gameField->setCurrentCellMode(2);
+    }else if(cellMode->currentText() == cellModeList[2]){
+        gameField->setCurrentCellMode(3);
+    }else if(cellMode->currentText() == cellModeList[3]){
+        gameField->setCurrentCellMode(4);
     }
 }
 
@@ -216,7 +234,7 @@ void CAbase::setupUI(){
     universeSizeLbl->setText("Universe Size  (10 - 100)");
     gameIntervalLbl->setText("Generation Interval (100-10000)");
     cellModelbl->setText("Cell Mode");
-    lifetimeLbl->setText("Lifetime");
+    lifetimeLbl->setText("Lifetime (change on restart of the game)");
 
     //set boundaries of SpinBoxes
     gameInterval->setMaximum(10000);
@@ -237,22 +255,23 @@ void CAbase::setupUI(){
     universeSize->setValue(50);
     gameInterval->setValue(500);
 
+    //Add lasdna
+    cellMode->addItem(cellModeList[0]);
+    cellMode->addItem(cellModeList[1]);
+    cellMode->addItem(cellModeList[2]);
+    cellMode->addItem(cellModeList[3]);
+
     //Add game mode tabs to ComboBox
     gameMode->addItem(gameModeList[0]);
     gameMode->addItem(gameModeList[1]);
     gameMode->addItem(gameModeList[2]); // for the next MileStones!
     //gameMode->addItem(gameModeList[3]);
 
-    //Add lasdna
-    cellMode->addItem(cellModeList[0]);
-    cellMode->addItem(cellModeList[1]);
-    cellMode->addItem(cellModeList[2]);
-
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);
     gameIntervalLbl->setFixedHeight(10);
     cellModelbl->setFixedHeight(10);
-    lifetimeLbl->setFixedHeight(10);
+    lifetimeLbl->setFixedHeight(20);
 
     //Adding widgets to the right side of the window
     menuSide->addWidget(startBtn,0,0); //addWidget(widget,row,column,rowspan,columnspan,alignment) | First Row

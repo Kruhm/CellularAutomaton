@@ -20,9 +20,12 @@ class GameField : public QGraphicsView{
 private:
     QGraphicsScene* field;
     GameOfLife* gameOfLife;
+    PredatorVictim* predatorPrey;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
+    int currentCellMode;
+    int currentGameMode;
 public:
     GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent = 0);
     ~GameField();
@@ -30,6 +33,8 @@ public:
     void drawGameOfLifeCell(int x,int y, int rectSize, bool cellState);
     void drawPedatorPreyField(int gameSize, PredatorVictim* predatorPrey);
     void clear();
+    void setCurrentCellMode(int cm);
+    void setCurrentGameMode(int gm);
     void showField();
 private slots:
     void mousePressEvent(QMouseEvent *event);

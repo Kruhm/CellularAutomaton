@@ -29,8 +29,9 @@ public:
     void predatorMovement(Cell currentCell);
     void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
     void clearField();
-    bool finish();
+    bool finish(bool endText=true);
     int getMaxLifetime();
+    int getGamesize();
     Cell getCell(int x, int y);
     void setCell(Cell newCell);
     void setMaxLifetime(int maxLifetime);
