@@ -35,7 +35,7 @@ void Cell::setPos(QPoint *pos){
     this->pos = pos;
 }
 
-void Cell::setLiftime(int lifetime){
+void Cell::setLifetime(int lifetime){
     this->lifetime = lifetime;
 }
 

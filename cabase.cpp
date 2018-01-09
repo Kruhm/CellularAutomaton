@@ -78,6 +78,10 @@ void CAbase::evolutionChoice(){
     if(gameMode->currentText() == gameModeList[2]){     // If PredatorPrey
         predatorPrey->moveCell();
         predatorPrey->uncheckCells();
+        if(predatorPrey->finish()){
+            timer->stop();
+            predatorPrey->createRandomGame();
+        }
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
         int dim = universeSize->value();
         snake->setMovedOnTick(false);   // new tick new direction possible

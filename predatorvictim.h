@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <QDebug>
+#include <QMessageBox>
 #include "cell.h"
 
 using namespace std;
@@ -14,6 +15,9 @@ private:
     vector<Cell> field;
     int gameSize;
     int maxLifetime;
+    int amountOfPrey;
+    int amountOfPredators;
+    int amountOfFood;
 
 public:
     PredatorVictim(int gameSize, int maxLifetime);
@@ -25,6 +29,7 @@ public:
     void predatorMovement(Cell currentCell);
     void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
     void clearField();
+    bool finish();
     Cell getCell(int x, int y);
     void setCell(Cell newCell);
     void setMaxLifetime(int maxLifetime);

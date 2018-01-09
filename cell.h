@@ -17,7 +17,7 @@ public:
     int getLiftime();
     void decrementLifetime();
     void setPos(QPoint* pos);
-    void setLiftime(int lifetime);
+    void setLifetime(int lifetime);
     void setstate(int status);
     void setChecked(bool checked);
     bool lostItsLife();
