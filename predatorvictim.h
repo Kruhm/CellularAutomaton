@@ -30,6 +30,7 @@ public:
     void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
     void clearField();
     bool finish();
+    int getMaxLifetime();
     Cell getCell(int x, int y);
     void setCell(Cell newCell);
     void setMaxLifetime(int maxLifetime);

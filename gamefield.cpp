@@ -77,14 +77,17 @@ void GameField::drawPedatorPreyField(const int gameSize, PredatorVictim* predato
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
-            if(predatorPrey->getCell(x,y).isFood()){
-                brush->setColor(Qt::green);
+            Cell current = predatorPrey->getCell(x,y);
+            float lifetimeRatio = ((float) current.getLiftime()/ (float) predatorPrey->getMaxLifetime());
+            if(current.isFood()){
+                brush->setColor(QColor(0,255,0));
                 this->field->addRect(rect,*pen,*brush); //add rect to the board
-            }else if(predatorPrey->getCell(x,y).isPrey()){
-                brush->setColor(Qt::yellow);
+            }else if(current.isPrey()){
+                qDebug() << current.getLiftime() << "|" << predatorPrey->getMaxLifetime();
+                brush->setColor(QColor(255,255,0,255*lifetimeRatio));
                 this->field->addRect(rect,*pen,*brush); //add rect to the board
-            }else if(predatorPrey->getCell(x,y).isPredator()){
-                brush->setColor(Qt::red);
+            }else if(current.isPredator()){
+                brush->setColor(QColor(255,0,0,255*lifetimeRatio));
                 this->field->addRect(rect,*pen,*brush); //add rect to the board
             }else{
                 brush->setColor(Qt::white);

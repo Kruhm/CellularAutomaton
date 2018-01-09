@@ -7,6 +7,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QColor>
 #include <QBrush>
 #include <QPen>
 #include <QPointF>

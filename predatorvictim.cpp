@@ -33,7 +33,6 @@ bool PredatorVictim::finish(){
             countPred++;
         }
     }
-    qDebug() << countPrey << "|" << countPred;
     if((countPrey + countPred) == 0){
         msg.setText("Draw... Neither Predator or Prey have won!");
     } else if(countPrey == 0){
@@ -203,4 +202,8 @@ void PredatorVictim::setCell(Cell newCell){
 
 void PredatorVictim::setMaxLifetime(int maxLifetime){
     this->maxLifetime = maxLifetime;
+}
+
+int PredatorVictim::getMaxLifetime(){
+    return this->maxLifetime;
 }
