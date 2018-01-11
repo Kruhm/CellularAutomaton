@@ -26,6 +26,7 @@ private:
     QPen* pen;
     int currentCellMode;
     int currentGameMode;
+    bool mouseDrag;
 public:
     GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent = 0);
     ~GameField();
@@ -36,8 +37,11 @@ public:
     void setCurrentCellMode(int cm);
     void setCurrentGameMode(int gm);
     void showField();
+    void mouseIsDragged();
 private slots:
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // GAMEFIELD_H

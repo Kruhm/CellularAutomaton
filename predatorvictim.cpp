@@ -8,15 +8,17 @@ PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
 }
 
 void PredatorVictim::clearField(){
-    vector<Cell> newField;
-    newField.reserve(gameSize*gameSize);
+    field.clear();
+    field.reserve(gameSize*gameSize);
+    this->amountOfPredators=0;
+    this->amountOfPrey=0;
+    this->amountOfFood=0;
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             Cell deadCell(new QPoint(x,y));
-            newField.push_back(deadCell);
+            field.push_back(deadCell);
         }
     }
-    field = newField;
 }
 
 void PredatorVictim::incrementPredatorCount(){
@@ -219,4 +221,12 @@ int PredatorVictim::getGamesize(){
 
 void PredatorVictim::setGameSize(int gm){
     this->gameSize = gm;
+}
+
+void PredatorVictim::decreasePredatorCount(){
+    this->amountOfPredators--;
+}
+
+void PredatorVictim::decreasePreyCount(){
+    this->amountOfPrey--;
 }

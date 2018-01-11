@@ -2,7 +2,8 @@
 
 CAbase::CAbase(QWidget *parent): QWidget(parent){
     /*
-     * GUI for a cellular automaton with the games Convey's Game of Life and Snake
+     * GUI for a cellular automaton with the games
+     * Convey's Game of Life, Snake and Predator-Prey
      */
     //Initialize Attributesses
     timer = new QTimer(this);
@@ -59,7 +60,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     // timer to update the gamefield every 50ms
     QTimer* updateTimer = new QTimer(this);
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
-    updateTimer->start(50);
+    updateTimer->start(100);
 
     //QMediaPlayer* player = new QMediaPlayer(this);
     //player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));

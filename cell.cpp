@@ -75,3 +75,7 @@ bool Cell::isDead(){
     return status == 4;
 }
 
+int Cell::getStatus(){
+    return this->status;
+}
+

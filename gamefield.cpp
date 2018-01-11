@@ -11,6 +11,7 @@ GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent)
     this->predatorPrey = pP;
     this->currentCellMode = 1;
     this->currentGameMode = 0;
+    this->mouseDrag = false;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::darkGray);
@@ -131,24 +132,51 @@ void GameField::mousePressEvent(QMouseEvent *e){
     /*
      * Gets the x and y pos of the mouseclick on the field and fills the associated rect blue
      */
+    this->mouseDrag = true;
+    mouseIsDragged();
+}
+
+void GameField::mouseIsDragged(){
     QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
     QPointF relativeOrigin = mapToScene(origin);    // map x,y to the current board
     int x = relativeOrigin.x()/10; // pixel to column
     int y = relativeOrigin.y()/10; // pixel to row
     if(x < 0 || y < 0 || x > predatorPrey->getGamesize() || y > predatorPrey->getGamesize()){return;}
     if(this->currentGameMode == 1){
-        if(currentCellMode < 4){
+        Cell currentCell = predatorPrey->getCell(x,y);
+        if(currentCellMode < 4 && currentCell.getStatus() != currentCellMode){
             predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));
             if(currentCellMode == 1){
                 predatorPrey->incrementPredatorCount();
+                if(currentCell.isPrey()){
+                    predatorPrey->decreasePreyCount();
+                }
             }else if(currentCellMode == 2){
                 predatorPrey->incrementPreyCount();
+                if(currentCell.isPredator()){
+                    predatorPrey->decreasePredatorCount();
+                }
             }
-        }else{
+        }else if(currentCellMode==4){
+            if(currentCell.isPredator()){
+                predatorPrey->decreasePredatorCount();
+            }else if(currentCell.isPrey()){
+                predatorPrey->decreasePreyCount();
+            }
             predatorPrey->setCell(Cell(new QPoint(x,y)));
         }
     }else if(currentGameMode == 0){
         bool state = this->gameOfLife->getCellState(x,y);
         this->gameOfLife->setCellState(x,y,!state); //toggle cell state
     }
+}
+
+void GameField::mouseMoveEvent(QMouseEvent *event){
+    if(mouseDrag){
+        mouseIsDragged();
+    }
+}
+
+void GameField::mouseReleaseEvent(QMouseEvent *event){
+    this->mouseDrag = false;
 }
