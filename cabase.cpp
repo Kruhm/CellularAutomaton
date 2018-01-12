@@ -58,11 +58,12 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(timer,SIGNAL(timeout()),this,SLOT(updateSelectedGame()));
 
     // timer to update the gamefield every 50ms
-    QTimer* updateTimer = new QTimer(this);
+    updateTimer = new QTimer(this);
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
     updateTimer->start(50);
 
     this->scrString = "";
+    this->player = new QMediaPlayer(this);
 }
 
 CAbase::~CAbase(){
@@ -80,8 +81,10 @@ void CAbase::updateSelectedGame(){
         updatePredatorPrey();
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
         updateSnake();
-    }else{                                          //Else game of Life
+    }else if(gameMode->currentText()==gameModeList[0]){                                          //Else game of Life
         updateGameOfLife();
+    }else{
+        gameField->drawRandom();
     }
 }
 
@@ -117,12 +120,15 @@ void CAbase::paintEvent(QPaintEvent *event){
      * Draws the grid on the left side of the Window.
      * Chooses which game should be drawn
      */
-    gameField->clear(); //emptying field
+    if(gameMode->currentIndex() != 3){
+        gameField->clear(); //emptying field
+    }
+
     if(gameMode->currentText()==gameModeList[2]){
         gameField->drawPedatorPreyField();
     }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
         gameField->drawSnakeField(universeSize->value()); // draw board for the snake game
-    }else{  // Mode => Game of Life
+    }else if(gameMode->currentText()==gameModeList[0]){  // Mode => Game of Life
         gameField->drawGameOfLifeCell(); // draw cell with given state of the GoL Board
     }
     gameField->showField(); // make board visible
@@ -153,11 +159,15 @@ void CAbase::keyPressEvent(QKeyEvent *e){
 
 void CAbase::doingTehPrivateThing(){
     hash<string> hashed;
-    qDebug() << hashed(scrString);
     if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
-        QMediaPlayer* player = new QMediaPlayer(this);
+        if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
+        gameMode->addItem("You found a secret!");
+        gameMode->setCurrentIndex(3);}
+        timer->setInterval(500);
         player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
         player->setVolume(10);
+        player->setPosition(50000);
+        timer->start();
         player->play();
     }else{
         scrString = "";
@@ -227,7 +237,6 @@ void CAbase::onIntervalValueChanged(){
 }
 
 void CAbase::onGameModeChanged(){
-    timer->stop();
     gameOfLife->setDoEvolution(0);
     if(gameMode->currentText()==gameModeList[2]){
         gameField->setCurrentGameMode(1);

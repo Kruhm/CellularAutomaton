@@ -131,6 +131,19 @@ void GameField::drawGameOfLifeCell(){
     }
 }
 
+void GameField::drawRandom(){
+    const int gameSize = predatorPrey->getGamesize();
+    srand(time(0) + rand());
+    for(int y = 0; y < gameSize; y++){
+        for(int x = 0; x < gameSize; x++){
+            QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
+            brush->setColor(QColor(rand()%256,rand()%256,rand()%256));
+            this->field->addRect(rect,*pen,*brush); //add rect to the board
+        }
+
+    }
+}
+
 void GameField::cellUpdate(){
     QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
     QPointF relOrigin = mapToScene(origin);    // map x,y to the current board

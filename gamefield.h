@@ -37,6 +37,7 @@ public:
     void drawSnakeField(int gameSize);
     void drawGameOfLifeCell();
     void drawPedatorPreyField();
+    void drawRandom();
     void clear();
     void setCurrentCellMode(int cm);
     void setCurrentGameMode(int gm);
