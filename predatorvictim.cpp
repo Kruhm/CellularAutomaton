@@ -77,27 +77,32 @@ void PredatorVictim::createRandomGame(){
     }
 }
 
-void PredatorVictim::cellDies(int x, int y){
+void PredatorVictim::cellDies(Cell cell){
+    const int x = cell.getX();
+    const int y = cell.getY();
     if(field[y * gameSize + x].isPredator())
         amountOfPredators--;
     else if(field[y * gameSize + x].isPrey())
         amountOfPrey--;
-    field[y * gameSize + x] = Cell(new QPoint(x,y));
+    killCell(x,y);
 }
 
 void PredatorVictim::moveCells(){
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             Cell currentCell = getCell(x,y);
-            if(!currentCell.isChecked() && (currentCell.isPredator() || currentCell.isPrey())){ //
+            // If cell has not been moved and cell can move
+            if(!currentCell.isChecked() && (currentCell.isPredator() || currentCell.isPrey())){
                 srand((int) time(0) + rand());
-                movement(currentCell);
+                vector<vector<vector<int>>> possibleMoves = possibleCellMoves(currentCell);
+                if(!possibleMoves.empty()) // If cell can move
+                    repositionCell(currentCell,possibleMoves[0],possibleMoves[1]);
             }
         }
     }
 }
 
-void PredatorVictim::movement(Cell cell){
+vector<vector<vector<int>>> PredatorVictim::possibleCellMoves(Cell cell){
     const int x = cell.getX();
     const int y = cell.getY();
     vector<vector<int>> nourishment;
@@ -115,47 +120,45 @@ void PredatorVictim::movement(Cell cell){
                 nourishment.push_back(relNeighbour);
             }else if(cell.isPrey() && neighbour.isPredator()){ // Prey can't move
                 cell.decrementLifetime();
-                return;
+                return {};
             }else if(neighbour.isDead()){
                 vector<int> relFreeSpace = {i,j};
                 freeNeighbours.push_back(relFreeSpace);
             }
         }
     }
-    moveToNewCell(cell,nourishment,freeNeighbours);
+    return {nourishment,freeNeighbours};
 }
 
-void PredatorVictim::moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace){
-    int x = currentCell.getPos()->x();
-    int y = currentCell.getPos()->y();
+void PredatorVictim::repositionCell(Cell cell, vector<vector<int>> nourishment, vector<vector<int>> freeNeighbour){
+    const int x = cell.getX();
+    const int y = cell.getY();
     int newX = 0;
     int newY = 0;
-    bool moves = true;
-    if(!nourishment.empty()){
-        if(currentCell.isPredator()) amountOfPrey--;
-        int relFoodPosIndex = rand() % nourishment.size();
-        newX = x + nourishment[relFoodPosIndex][0];
-        newY = y + nourishment[relFoodPosIndex][1];
-        currentCell.setLifetime(this->maxLifetime);
-    }else if(!freeSpace.empty()){
-        int relFreeNeighbourPos = rand() % freeSpace.size();
-        newX = x + freeSpace[relFreeNeighbourPos][0];
-        newY = y + freeSpace[relFreeNeighbourPos][1];
-        currentCell.decrementLifetime();
-    } else {
-        moves = false;
-        currentCell.decrementLifetime();
+
+    if(!nourishment.empty()){ // If cell can eat a neighbour
+        if(cell.isPredator()) amountOfPrey--; // If Predator eats a Prey, reduce the PreyCounter
+        int foodIdx = rand() % nourishment.size();
+        newX = x + nourishment[foodIdx][0];
+        newY = y + nourishment[foodIdx][1];
+        cell.setLifetime(this->maxLifetime+1); //+1 bcs its getting decremented later;
+    }else if(!freeNeighbour.empty()){ // If cell has a free neighbour to move to
+        int freeNeighbourIdx = rand() % freeNeighbour.size();
+        newX = x + freeNeighbour[freeNeighbourIdx][0];
+        newY = y + freeNeighbour[freeNeighbourIdx][1];
     }
-    if(moves){
-        QPoint* newPos = new QPoint(newX, newY);
-        currentCell.setPos(newPos);
-        currentCell.setChecked(true);
-        setCell(Cell(new QPoint(x,y)));
-        setCell(currentCell);
+
+    cell.decrementLifetime();
+    if(cell.lostItsLife()){
+        cellDies(cell);
+        return;
     }
-    if(currentCell.lostItsLife()){
-        cellDies(newX,newY);
-    }
+
+    QPoint* newPos = new QPoint(newX, newY);
+    cell.setPos(newPos);
+    cell.setChecked(true);
+    killCell(x,y);
+    setCell(cell);
 }
 
 void PredatorVictim::uncheckCells(){
@@ -204,4 +207,8 @@ void PredatorVictim::incrementPredatorCount(){
 
 void PredatorVictim::incrementPreyCount(){
     this->amountOfPrey++;
+}
+
+void PredatorVictim::killCell(int x, int y){
+    setCell(Cell(new QPoint(x,y)));
 }

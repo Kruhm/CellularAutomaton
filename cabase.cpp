@@ -60,7 +60,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     // timer to update the gamefield every 50ms
     QTimer* updateTimer = new QTimer(this);
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
-    updateTimer->start(100);
+    updateTimer->start(50);
 
     //QMediaPlayer* player = new QMediaPlayer(this);
     //player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
