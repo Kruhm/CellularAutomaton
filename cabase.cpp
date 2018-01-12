@@ -135,7 +135,7 @@ void CAbase::keyPressEvent(QKeyEvent *e){
      */
     int snakeDirection = snake->getDirection();
     scrString+=QKeySequence(e->key()).toString().toStdString();
-    if(e->key() == Qt::Key_Return){
+    if(e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter){
             doingTehPrivateThing();
     }
     if(snake->getMovedOnTick()) // if snake already had a direction change on tick
@@ -153,7 +153,8 @@ void CAbase::keyPressEvent(QKeyEvent *e){
 
 void CAbase::doingTehPrivateThing(){
     hash<string> hashed;
-    if(hashed(scrString)==secret){
+    qDebug() << hashed(scrString);
+    if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
         QMediaPlayer* player = new QMediaPlayer(this);
         player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
         player->setVolume(10);

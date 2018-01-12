@@ -60,7 +60,8 @@ private:
     //gameField
     GameField* gameField;
 
-    const unsigned int secret = 1479627829;
+    const unsigned int scr1 = 1479627829;
+    const unsigned int scr2 = 1721837343;
     string scrString;
     void doingTehPrivateThing();
 
