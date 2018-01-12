@@ -147,12 +147,12 @@ void GameField::mouseIsDragged(){
         if(currentCell.getStatus() != currentCellMode){
             predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));
             if(currentCellMode == 1){
-                predatorPrey->incrementPredatorCount();
+                predatorPrey->increasePredatorCount();
                 if(currentCell.isPrey()){
                     predatorPrey->decreasePreyCount();
                 }
             }else if(currentCellMode == 2){
-                predatorPrey->incrementPreyCount();
+                predatorPrey->increasePreyCount();
                 if(currentCell.isPredator()){
                     predatorPrey->decreasePredatorCount();
                 }

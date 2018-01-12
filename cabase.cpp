@@ -85,7 +85,7 @@ void CAbase::evolutionChoice(){
         if(predatorPrey->finish()){
             timer->stop();
             predatorPrey->setMaxLifetime(lifetime->value());
-            predatorPrey->createRandomGame();
+            predatorPrey->newGame();
         }
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
         int dim = universeSize->value();
@@ -169,7 +169,7 @@ void CAbase::onClearBtnClicked(){
     timer->stop();
     gameOfLife->wipe();
     snake->reset();
-    predatorPrey->clearField();
+    predatorPrey->clear();
 }
 
 void CAbase::onNewGameBtnClicked(){
@@ -178,7 +178,7 @@ void CAbase::onNewGameBtnClicked(){
     gameOfLife->createGlider();
     snake->reset();
     predatorPrey->setMaxLifetime(lifetime->value());
-    predatorPrey->createRandomGame();
+    predatorPrey->newGame();
 }
 
 void CAbase::onUniverseSizeChanged(){
@@ -189,7 +189,7 @@ void CAbase::onUniverseSizeChanged(){
     timer->stop();
     gameOfLife->setSize(universeSize->value());
     predatorPrey->setGameSize(universeSize->value());
-    predatorPrey->createRandomGame();
+    predatorPrey->newGame();
     snake->reset();
     snake->spawnFood(universeSize->value());
 }
@@ -208,7 +208,7 @@ void CAbase::onGameModeChanged(){
     gameOfLife->setDoEvolution(0);
     if(gameMode->currentText()==gameModeList[2]){
         gameField->setCurrentGameMode(1);
-        predatorPrey->createRandomGame();
+        predatorPrey->newGame();
         cellModelbl->show();
         cellMode->show();
         lifetimeLbl->show();

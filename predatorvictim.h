@@ -27,25 +27,23 @@ private:
 
 public:
     PredatorVictim(int gameSize, int maxLifetime);
-    void createRandomGame();
-    void cellDies(Cell cell);
     void moveCells();
-    void uncheckCells();
-    void preyMovement(Cell currentCell);
-    void predatorMovement(Cell currentCell);
-    void clearField();
+    void clear();
+    void newGame();
+    void cellDies(Cell cell);
+    void killCell(int x, int y);
     bool finish(bool endText=true);
-    int getMaxLifetime();
-    void setGameSize(int gm);
-    int getGamesize();
-    void incrementPreyCount();
-    void incrementPredatorCount();
+    void uncheckCells();
+    void increasePreyCount();
+    void increasePredatorCount();
     void decreasePreyCount();
     void decreasePredatorCount();
-    void killCell(int x, int y);
-    Cell getCell(int x, int y);
+    void setGameSize(int gm);
     void setCell(Cell newCell);
     void setMaxLifetime(int maxLifetime);
+    int getGamesize();
+    int getMaxLifetime();
+    Cell getCell(int x, int y);
 };
 
 #endif // PREDATORVICTIM_H
