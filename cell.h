@@ -26,6 +26,8 @@ public:
     bool isPredator();
     bool isPrey();
     bool isFood();
+    int getX();
+    int getY();
     int getStatus();
     QPoint* getPos();
 };

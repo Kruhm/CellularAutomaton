@@ -75,6 +75,14 @@ bool Cell::isDead(){
     return status == 4;
 }
 
+int Cell::getX(){
+    return this->pos->x();
+}
+
+int Cell::getY(){
+    return this->pos->y();
+}
+
 int Cell::getStatus(){
     return this->status;
 }

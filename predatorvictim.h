@@ -19,6 +19,9 @@ private:
     int amountOfPredators;
     int amountOfFood;
 
+    void movement(Cell cell);
+    void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
+
 public:
     PredatorVictim(int gameSize, int maxLifetime);
     void createRandomGame();
@@ -27,7 +30,6 @@ public:
     void uncheckCells();
     void preyMovement(Cell currentCell);
     void predatorMovement(Cell currentCell);
-    void moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
     void clearField();
     bool finish(bool endText=true);
     int getMaxLifetime();

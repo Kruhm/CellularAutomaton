@@ -21,14 +21,6 @@ void PredatorVictim::clearField(){
     }
 }
 
-void PredatorVictim::incrementPredatorCount(){
-    this->amountOfPredators++;
-}
-
-void PredatorVictim::incrementPreyCount(){
-    this->amountOfPrey++;
-}
-
 bool PredatorVictim::finish(bool endText){
     QMessageBox msg;
     if((amountOfPrey + amountOfPredators) == 0){
@@ -96,66 +88,38 @@ void PredatorVictim::moveCell(){
             Cell currentCell = getCell(x,y);
             if(!currentCell.isChecked() && !currentCell.isDead() && !currentCell.isFood()){
                 srand((int) time(0) + rand());
-                if(currentCell.isPredator()){
-                    predatorMovement(currentCell);
-                } else if(currentCell.isPrey()){
-                    preyMovement(currentCell);
-                }
+                movement(currentCell);
             }
         }
     } // end top for
 }
 
-void PredatorVictim::predatorMovement(Cell currentCell){
-    const int x = currentCell.getPos()->x();
-    const int y = currentCell.getPos()->y();
-    vector<vector<int>> hasPrey;
-    vector<vector<int>> freeNeighbour;
-    for(int j = -1; j < 2;j++){ // look at neighbours
+void PredatorVictim::movement(Cell cell){
+    const int x = cell.getX();
+    const int y = cell.getY();
+    vector<vector<int>> nourishment;
+    vector<vector<int>> freeNeighbours;
+    for(int j = -1; j < 2;j++){ // look at adjacent cells
         if(y + j < 0 || j + y >= gameSize) continue; // y boundaries
         for(int i = -1; i < 2;i++){
-            if(j == 0 && i == 0){continue;}
-            else if(i + x < 0 || i + x >= gameSize) continue; // x boundaries
-            Cell neighbour = getCell(x+i,y+j);
-            if(neighbour.isPrey()){
+            if(i + x < 0 || i + x >= gameSize) continue; // x boundaries
+            if(j == 0 && i == 0) continue; // skip own cell
+            Cell neighbour = this->getCell(x+i, y+j);
+            bool predCanEat = cell.isPredator() && neighbour.isPrey();
+            bool preyCanEat = cell.isPrey() && neighbour.isFood();
+            if(predCanEat || preyCanEat){ // Predator eats Prey
                 vector<int> relNeighbour = {i,j};
-                hasPrey.push_back(relNeighbour);
+                nourishment.push_back(relNeighbour);
+            }else if(cell.isPrey() && neighbour.isPredator()){
+                cell.decrementLifetime();
+                return;
             }else if(neighbour.isDead()){
                 vector<int> relFreeSpace = {i,j};
-                freeNeighbour.push_back(relFreeSpace);
+                freeNeighbours.push_back(relFreeSpace);
             }
         }
     }
-    moveToNewCell(currentCell,hasPrey,freeNeighbour);
-}
-
-void PredatorVictim::preyMovement(Cell currentCell){
-    const int x = currentCell.getPos()->x();
-    const int y = currentCell.getPos()->y();
-    bool hasPredator = false;
-    vector<vector<int>> hasFoods;
-    vector<vector<int>> freeNeighbour;
-    for(int j = -1; j < 2;j++){ // look at neighbours
-        if(y + j < 0 || j + y >= gameSize) continue; // y boundaries
-        for(int i = -1; i < 2;i++){
-            if(j == 0 && i == 0){continue;}
-            else if(i + x < 0 || i + x >= gameSize) continue; // x boundaries
-            Cell neighbour = getCell(x+i,y+j);
-            if(neighbour.isPredator()){
-                hasPredator = true;
-            }else if(neighbour.isFood()){
-                vector<int> food = {i,j};
-                hasFoods.push_back(food);
-            } else if(neighbour.isDead()){
-                vector<int> relNeighbour = {i,j};
-                freeNeighbour.push_back(relNeighbour);
-            }
-        }
-    } // end mid for
-    if(!hasPredator){
-        moveToNewCell(currentCell,hasFoods,freeNeighbour);
-    }
-    //dont move
+    moveToNewCell(cell,nourishment,freeNeighbours);
 }
 
 void PredatorVictim::moveToNewCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace){
@@ -229,4 +193,12 @@ void PredatorVictim::decreasePredatorCount(){
 
 void PredatorVictim::decreasePreyCount(){
     this->amountOfPrey--;
+}
+
+void PredatorVictim::incrementPredatorCount(){
+    this->amountOfPredators++;
+}
+
+void PredatorVictim::incrementPreyCount(){
+    this->amountOfPrey++;
 }
