@@ -55,7 +55,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
     connect(cellMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onCellModeValueChanged()));
-    connect(timer,SIGNAL(timeout()),this,SLOT(evolutionChoice()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(updateSelectedGame()));
 
     // timer to update the gamefield every 50ms
     QTimer* updateTimer = new QTimer(this);
@@ -75,31 +75,43 @@ CAbase::~CAbase(){
     delete gameField;
 }
 
-void CAbase::evolutionChoice(){
+void CAbase::updateSelectedGame(){
     /*
      *  decides which game should be progressing, based on the game mode SpinBox
      */
     if(gameMode->currentText() == gameModeList[2]){     // If PredatorPrey
-        predatorPrey->moveCells();
-        predatorPrey->uncheckCells();
-        if(predatorPrey->finish()){
-            timer->stop();
-            predatorPrey->setMaxLifetime(lifetime->value());
-            predatorPrey->newGame();
-        }
+        updatePredatorPrey();
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
-        int dim = universeSize->value();
-        snake->setMovedOnTick(false);   // new tick new direction possible
-        snake->eat();       // checks for food
-        snake->move(dim);   // move snake body
-        if(snake->collision(dim)){  // if snake collides
-            timer->stop();
-            snake->die();   // open dying message
-        }
+        updateSnake();
     }else{                                          //Else game of Life
-        if(!gameOfLife->isRunning()){   // if the thread isn't currently running
-            gameOfLife->start();    // start the GoL thread
-        }
+        updateGameOfLife();
+    }
+}
+
+void CAbase::updateSnake(){
+    int dim = universeSize->value();
+    snake->setMovedOnTick(false);   // new tick new direction possible
+    snake->eat();       // checks for food
+    snake->move(dim);   // move snake body
+    if(snake->collision(dim)){  // if snake collides
+        timer->stop();
+        snake->die();   // open dying message
+    }
+}
+
+void CAbase::updateGameOfLife(){
+    if(!gameOfLife->isRunning()){   // if the thread isn't currently running
+        gameOfLife->start();    // start the GoL thread
+    }
+}
+
+void CAbase::updatePredatorPrey(){
+    predatorPrey->moveCells();
+    predatorPrey->uncheckCells();
+    if(predatorPrey->finish()){
+        timer->stop();
+        predatorPrey->setMaxLifetime(lifetime->value());
+        predatorPrey->newGame();
     }
 }
 

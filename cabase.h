@@ -62,6 +62,9 @@ private:
 
 public slots:
     void evolutionChoice();
+    void updateGameOfLife();
+    void updateSnake();
+    void updatePredatorPrey();
     void onStartBtnClicked();
     void onPauseBtnClicked();
     void onClearBtnClicked();
