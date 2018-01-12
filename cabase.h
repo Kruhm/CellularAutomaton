@@ -60,6 +60,10 @@ private:
     //gameField
     GameField* gameField;
 
+    const unsigned int secret = 1479627829;
+    string scrString;
+    void doingTehPrivateThing();
+
 public slots:
     void updateSelectedGame();
     void updateGameOfLife();

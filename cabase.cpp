@@ -62,10 +62,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(updateTimer,SIGNAL(timeout()),this,SLOT(update()));
     updateTimer->start(50);
 
-    //QMediaPlayer* player = new QMediaPlayer(this);
-    //player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
-    //player->setVolume(10);
-    //player->play();
+    this->scrString = "";
 }
 
 CAbase::~CAbase(){
@@ -137,6 +134,10 @@ void CAbase::keyPressEvent(QKeyEvent *e){
      * evaluates the key pressed.
      */
     int snakeDirection = snake->getDirection();
+    scrString+=QKeySequence(e->key()).toString().toStdString();
+    if(e->key() == Qt::Key_Return){
+            doingTehPrivateThing();
+    }
     if(snake->getMovedOnTick()) // if snake already had a direction change on tick
         return;
     else if(e->key() == Qt::Key_2 && snakeDirection != 8) // down - 2 has been pressed and not moving up
@@ -148,6 +149,18 @@ void CAbase::keyPressEvent(QKeyEvent *e){
     else if(e->key() == Qt::Key_8 && snakeDirection != 2) // up - 8 has been pressed and not moving down
         snake->setDirection(8);
     snake->setMovedOnTick(true); // snake can change direction only one time per tick
+}
+
+void CAbase::doingTehPrivateThing(){
+    hash<string> hashed;
+    if(hashed(scrString)==secret){
+        QMediaPlayer* player = new QMediaPlayer(this);
+        player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
+        player->setVolume(10);
+        player->play();
+    }else{
+        scrString = "";
+    }
 }
 
 void CAbase::onStartBtnClicked(){
