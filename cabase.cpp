@@ -80,7 +80,7 @@ void CAbase::evolutionChoice(){
      *  decides which game should be progressing, based on the game mode SpinBox
      */
     if(gameMode->currentText() == gameModeList[2]){     // If PredatorPrey
-        predatorPrey->moveCell();
+        predatorPrey->moveCells();
         predatorPrey->uncheckCells();
         if(predatorPrey->finish()){
             timer->stop();

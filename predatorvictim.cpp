@@ -4,6 +4,9 @@ PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
     field.reserve(gameSize*gameSize); // allocate memory to fit the field size
     this->gameSize = gameSize;
     this->maxLifetime = lifetime;
+    this->preySpawnRate = 0.05;
+    this->predatorSpawnRate = 0.01;
+    this->foodSpawnRate = 0.1;
     clearField();
 }
 
@@ -39,15 +42,15 @@ bool PredatorVictim::finish(bool endText){
 
 void PredatorVictim::createRandomGame(){
     clearField();
-    int dim = gameSize;
-    this->amountOfPredators = (gameSize*gameSize)*0.01;
-    this->amountOfFood = (gameSize*gameSize)*0.1;
-    this->amountOfPrey = (gameSize*gameSize)*0.05;
+    int dim= gameSize*gameSize;
+    this->amountOfPredators = this->predatorSpawnRate*dim;
+    this->amountOfPrey = this->preySpawnRate*dim;
+    this->amountOfFood = this->foodSpawnRate*dim;
     srand((int) time(0));
     int foodIdx = 0;
     while(foodIdx < this->amountOfFood){
-        int x = rand() % dim;
-        int y = rand() % dim;
+        int x = rand() % gameSize;
+        int y = rand() % gameSize;
         Cell food(new QPoint(x,y),-1,3);
         if(!field[y*gameSize+x].isDead()) {continue;}
         field[y*gameSize+x] = food;
@@ -55,8 +58,8 @@ void PredatorVictim::createRandomGame(){
     }
     int preyIdx = 0;
     while(preyIdx < this->amountOfPrey){
-        int preyX = rand() % dim;
-        int preyY = rand() % dim;
+        int preyX = rand() % gameSize;
+        int preyY = rand() % gameSize;
         if(!field[preyY*gameSize+preyX].isDead()){continue;}
         Cell prey(new QPoint(preyX, preyY),maxLifetime,2);
         field[preyY*gameSize+preyX] = prey;
@@ -65,8 +68,8 @@ void PredatorVictim::createRandomGame(){
 
     int predIdx = 0;
     while(predIdx < this->amountOfPredators){
-        int predatorX = rand() % dim;
-        int predatorY = rand() % dim;
+        int predatorX = rand() % gameSize;
+        int predatorY = rand() % gameSize;
         if(!field[predatorY*gameSize+predatorX].isDead()) {continue;}
         Cell predator(new QPoint(predatorX,predatorY),maxLifetime,1);
         field[predatorY*gameSize+predatorX] = predator;
@@ -82,16 +85,16 @@ void PredatorVictim::cellDies(int x, int y){
     field[y * gameSize + x] = Cell(new QPoint(x,y));
 }
 
-void PredatorVictim::moveCell(){
+void PredatorVictim::moveCells(){
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             Cell currentCell = getCell(x,y);
-            if(!currentCell.isChecked() && !currentCell.isDead() && !currentCell.isFood()){
+            if(!currentCell.isChecked() && (currentCell.isPredator() || currentCell.isPrey())){ //
                 srand((int) time(0) + rand());
                 movement(currentCell);
             }
         }
-    } // end top for
+    }
 }
 
 void PredatorVictim::movement(Cell cell){
@@ -107,10 +110,10 @@ void PredatorVictim::movement(Cell cell){
             Cell neighbour = this->getCell(x+i, y+j);
             bool predCanEat = cell.isPredator() && neighbour.isPrey();
             bool preyCanEat = cell.isPrey() && neighbour.isFood();
-            if(predCanEat || preyCanEat){ // Predator eats Prey
+            if(predCanEat || preyCanEat){ // If Predator can eat Prey OR Prey can eat Food
                 vector<int> relNeighbour = {i,j};
                 nourishment.push_back(relNeighbour);
-            }else if(cell.isPrey() && neighbour.isPredator()){
+            }else if(cell.isPrey() && neighbour.isPredator()){ // Prey can't move
                 cell.decrementLifetime();
                 return;
             }else if(neighbour.isDead()){

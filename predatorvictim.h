@@ -13,6 +13,9 @@ class PredatorVictim{
 
 private:
     vector<Cell> field;
+    float preySpawnRate;
+    float predatorSpawnRate;
+    float foodSpawnRate;
     int gameSize;
     int maxLifetime;
     int amountOfPrey;
@@ -26,7 +29,7 @@ public:
     PredatorVictim(int gameSize, int maxLifetime);
     void createRandomGame();
     void cellDies(int x, int y);
-    void moveCell();
+    void moveCells();
     void uncheckCells();
     void preyMovement(Cell currentCell);
     void predatorMovement(Cell currentCell);
