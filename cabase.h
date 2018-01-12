@@ -18,7 +18,7 @@
 
 #include "snake.h"
 #include "gameoflife.h"
-#include "predatorvictim.h"
+#include "predatorprey.h"
 #include "gamefield.h"
 
 class CAbase : public QWidget{
@@ -30,7 +30,7 @@ private:
     //Gamesses
     GameOfLife* gameOfLife;
     Snake* snake;
-    PredatorVictim* predatorPrey;
+    PredatorPrey* predatorPrey;
     //Layouts
     QHBoxLayout* mainLayout;
     QGridLayout* menuSide;
@@ -61,7 +61,7 @@ private:
     GameField* gameField;
 
 public slots:
-    void evolutionChoice();
+    void updateSelectedGame();
     void updateGameOfLife();
     void updateSnake();
     void updatePredatorPrey();

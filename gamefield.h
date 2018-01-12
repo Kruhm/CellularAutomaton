@@ -3,7 +3,7 @@
 
 #include "gameoflife.h"
 #include "snake.h"
-#include "predatorvictim.h"
+#include "predatorprey.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -21,7 +21,7 @@ private:
     QGraphicsScene* field;
     GameOfLife* gameOfLife;
     Snake* snake;
-    PredatorVictim* predatorPrey;
+    PredatorPrey* predatorPrey;
     QBrush* brush;
     QBrush* bgBrush;
     QPen* pen;
@@ -32,7 +32,7 @@ private:
 
     void adjustingPredPreyCounter(Cell cell);
 public:
-    GameField(GameOfLife* gol,Snake* snake, PredatorVictim* pP, QGraphicsView *parent = 0);
+    GameField(GameOfLife* gol,Snake* snake, PredatorPrey* pP, QGraphicsView *parent = 0);
     ~GameField();
     void drawSnakeField(int gameSize);
     void drawGameOfLifeCell();

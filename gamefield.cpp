@@ -1,6 +1,6 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol, Snake* snake, PredatorVictim* pP, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol, Snake* snake, PredatorPrey* pP, QGraphicsView *parent): QGraphicsView(parent){
     /*
      * GraphicsView holding a cellular grid
      * GameMode 1: Game of Life | 2: Predator Prey

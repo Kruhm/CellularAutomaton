@@ -1,6 +1,6 @@
-#include "predatorvictim.h"
+#include "predatorprey.h"
 
-PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
+PredatorPrey::PredatorPrey(const int gameSize, const int lifetime){
     field.reserve(gameSize*gameSize); // allocate memory to fit the field size
     this->gameSize = gameSize;
     this->maxLifetime = lifetime;
@@ -10,7 +10,7 @@ PredatorVictim::PredatorVictim(const int gameSize, const int lifetime){
     clear();
 }
 
-void PredatorVictim::moveCells(){
+void PredatorPrey::moveCells(){
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             Cell currentCell = getCell(x,y);
@@ -25,7 +25,7 @@ void PredatorVictim::moveCells(){
     }
 }
 
-vector<vector<vector<int>>> PredatorVictim::possibleCellMoves(Cell cell){
+vector<vector<vector<int>>> PredatorPrey::possibleCellMoves(Cell cell){
     const int x = cell.getX();
     const int y = cell.getY();
     vector<vector<int>> nourishment;
@@ -53,7 +53,7 @@ vector<vector<vector<int>>> PredatorVictim::possibleCellMoves(Cell cell){
     return {nourishment,freeNeighbours};
 }
 
-void PredatorVictim::repositionCell(Cell cell, vector<vector<int>> nourishment, vector<vector<int>> freeNeighbour){
+void PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, vector<vector<int>> freeNeighbour){
     const int x = cell.getX();
     const int y = cell.getY();
     int newX = 0;
@@ -84,7 +84,7 @@ void PredatorVictim::repositionCell(Cell cell, vector<vector<int>> nourishment, 
     setCell(cell);
 }
 
-void PredatorVictim::clear(){
+void PredatorPrey::clear(){
     field.clear();
     field.reserve(gameSize*gameSize);
     this->amountOfPredators=0;
@@ -98,7 +98,7 @@ void PredatorVictim::clear(){
     }
 }
 
-void PredatorVictim::newGame(){
+void PredatorPrey::newGame(){
     clear();
     int dim= gameSize*gameSize;
     this->amountOfPredators = this->predatorSpawnRate*dim;
@@ -135,7 +135,7 @@ void PredatorVictim::newGame(){
     }
 }
 
-void PredatorVictim::cellDies(Cell cell){
+void PredatorPrey::cellDies(Cell cell){
     const int x = cell.getX();
     const int y = cell.getY();
     if(field[y * gameSize + x].isPredator())
@@ -145,11 +145,11 @@ void PredatorVictim::cellDies(Cell cell){
     killCell(x,y);
 }
 
-void PredatorVictim::killCell(int x, int y){
+void PredatorPrey::killCell(int x, int y){
     setCell(Cell(new QPoint(x,y)));
 }
 
-bool PredatorVictim::finish(bool endText){
+bool PredatorPrey::finish(bool endText){
     QMessageBox msg;
     if((amountOfPrey + amountOfPredators) == 0){
         msg.setText("Draw... Neither Predator nor Prey have won!");
@@ -165,7 +165,7 @@ bool PredatorVictim::finish(bool endText){
     return true;
 }
 
-void PredatorVictim::uncheckCells(){
+void PredatorPrey::uncheckCells(){
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             field[y * gameSize + x].setChecked(false);
@@ -173,42 +173,42 @@ void PredatorVictim::uncheckCells(){
     }
 }
 
-void PredatorVictim::increasePredatorCount(){
+void PredatorPrey::increasePredatorCount(){
     this->amountOfPredators++;
 }
 
-void PredatorVictim::increasePreyCount(){
+void PredatorPrey::increasePreyCount(){
     this->amountOfPrey++;
 }
 
-void PredatorVictim::decreasePredatorCount(){
+void PredatorPrey::decreasePredatorCount(){
     this->amountOfPredators--;
 }
 
-void PredatorVictim::decreasePreyCount(){
+void PredatorPrey::decreasePreyCount(){
     this->amountOfPrey--;
 }
 
-void PredatorVictim::setGameSize(int gm){
+void PredatorPrey::setGameSize(int gm){
     this->gameSize = gm;
 }
 
-void PredatorVictim::setCell(Cell newCell){
+void PredatorPrey::setCell(Cell newCell){
     field[newCell.getPos()->y() * gameSize + newCell.getPos()->x()] = newCell;
 }
 
-void PredatorVictim::setMaxLifetime(int maxLifetime){
+void PredatorPrey::setMaxLifetime(int maxLifetime){
     this->maxLifetime = maxLifetime;
 }
 
-int PredatorVictim::getMaxLifetime(){
+int PredatorPrey::getMaxLifetime(){
     return this->maxLifetime;
 }
 
-int PredatorVictim::getGamesize(){
+int PredatorPrey::getGamesize(){
     return this->gameSize;
 }
 
-Cell PredatorVictim::getCell(const int x, const int y){
+Cell PredatorPrey::getCell(const int x, const int y){
     return field[y * gameSize + x];
 }

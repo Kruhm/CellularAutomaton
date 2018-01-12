@@ -30,7 +30,7 @@ SOURCES += main.cpp \
         snake.cpp \
         snakeBodyPart.cpp \
         cell.cpp \
-        predatorvictim.cpp
+    predatorprey.cpp
 
 HEADERS += cabase.h \
         gameoflife.h \
@@ -38,7 +38,7 @@ HEADERS += cabase.h \
         snake.h \
         snakeBodyPart.h \
         cell.h \
-        predatorvictim.h
+    predatorprey.h
 
 RESOURCES += \
     res.qrc

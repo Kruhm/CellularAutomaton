@@ -1,5 +1,5 @@
-#ifndef PREDATORVICTIM_H
-#define PREDATORVICTIM_H
+#ifndef PREDATORPREY_H
+#define PREDATORPREY_H
 
 #include <ctime>
 #include <vector>
@@ -9,7 +9,7 @@
 #include "cell.h"
 
 using namespace std;
-class PredatorVictim{
+class PredatorPrey{
 
 private:
     vector<Cell> field;
@@ -26,7 +26,7 @@ private:
     void repositionCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
 
 public:
-    PredatorVictim(int gameSize, int maxLifetime);
+    PredatorPrey(int gameSize, int maxLifetime);
     void moveCells();
     void clear();
     void newGame();
@@ -46,4 +46,4 @@ public:
     Cell getCell(int x, int y);
 };
 
-#endif // PREDATORVICTIM_H
+#endif // PREDATORPREY_H
