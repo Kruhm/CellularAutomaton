@@ -1,6 +1,6 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gol, Snake* snake, PredatorVictim* pP, QGraphicsView *parent): QGraphicsView(parent){
     /*
      * GraphicsView holding a cellular grid
      * GameMode 1: Game of Life | 2: Predator Prey
@@ -9,9 +9,11 @@ GameField::GameField(GameOfLife* gol, PredatorVictim* pP, QGraphicsView *parent)
     field = new QGraphicsScene(this);
     this->gameOfLife = gol;
     this->predatorPrey = pP;
+    this->snake = snake;
     this->currentCellMode = 1;
     this->currentGameMode = 0;
     this->mouseDrag = false;
+    this->rectSize = 10;
     brush = new QBrush(Qt::white);
     bgBrush = new QBrush(Qt::lightGray);
     pen = new QPen(Qt::darkGray);
@@ -41,14 +43,16 @@ void GameField::showField(){
     this->setScene(field);
 }
 
-void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QPoint* food){
+void GameField::drawSnakeField(const int fieldSize){
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
-    int rectSize = 10;
+    SnakeBodyPart* tail = this->snake->getTail();
+    QPoint* food = this->snake->getFood();
     for(int y = 0; y < fieldSize;y++){
         for(int x = 0; x < fieldSize;x++){
             bool isSnakeCell = false;
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
-            SnakeBodyPart* current = snakeTail;
+            SnakeBodyPart* current = tail;
+
             while(current){ // loop through snake
                 QPoint pos = current->getPos();
                 if(pos.x() == x && pos.y() == y){ // if (x,y) pos is the current snake pos
@@ -57,6 +61,7 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
                 }
                 current = current->getParent();
             }
+
             if(isSnakeCell){    // cell is a snake body part
                 brush->setColor(Qt::green);
                 this->field->addRect(rect,*pen,*brush); //add rect to the board
@@ -71,15 +76,7 @@ void GameField::drawSnakeField(const int fieldSize, SnakeBodyPart* snakeTail, QP
     }
 }
 
-void GameField::setCurrentCellMode(int cm){
-    this->currentCellMode = cm;
-}
-
-void GameField::setCurrentGameMode(int gm){
-    this->currentGameMode = gm;
-}
-
-void GameField::drawPedatorPreyField(const int gameSize, PredatorVictim* predatorPrey){
+void GameField::drawPedatorPreyField(){
     /*
      * Draws the field for the Game Predator - Prey
      * Green -> Food Cell
@@ -87,7 +84,7 @@ void GameField::drawPedatorPreyField(const int gameSize, PredatorVictim* predato
      * Yellow -> Prey Cell
      * otherwise -> Dead Cell
      */
-    int rectSize = 10;
+    const int gameSize = predatorPrey->getGamesize();
     for(int y = 0; y < gameSize; y++){
         for(int x = 0; x < gameSize; x++){
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
@@ -111,21 +108,75 @@ void GameField::drawPedatorPreyField(const int gameSize, PredatorVictim* predato
     }
 }
 
-void GameField::drawGameOfLifeCell(int x, int y, int rectSize, bool cellState){
+void GameField::drawGameOfLifeCell(){
     /*
      * Draws a rectangle on a given x and y position with a given size.
      * Rect will be filled blue if cellState is true, otherwise it's white
      */
-
-    field->setBackgroundBrush(*bgBrush);    // Make the background grey
-    QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
-    if(cellState){ // if cell is alive, fill rect blue
-        brush->setColor(Qt::blue);
-        this->field->addRect(rect,*pen,*brush);
-    }else{  // otherwise cell is dead, fill rect white
-        brush->setColor(Qt::white);
-        this->field->addRect(rect,*pen,*brush); //add rect to the scene
+    const int dim = gameOfLife->getDim();
+    const int gameSize = dim*dim;
+    for(int i = 0; i < gameSize; i++){
+        int x = i / dim;
+        int y = i % dim;
+        bool cellState = gameOfLife->getCellState(i/dim,i%dim);
+        field->setBackgroundBrush(*bgBrush);    // Make the background grey
+        QRect rect(rectSize*x,rectSize*y,rectSize,rectSize); //creates a rect on the given x and y with the given size
+        if(cellState){ // if cell is alive, fill rect blue
+            brush->setColor(Qt::blue);
+            this->field->addRect(rect,*pen,*brush);
+        }else{  // otherwise cell is dead, fill rect white
+            brush->setColor(Qt::white);
+            this->field->addRect(rect,*pen,*brush); //add rect to the scene
+        }
     }
+}
+
+void GameField::cellUpdate(){
+    QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
+    QPointF relOrigin = mapToScene(origin);    // map x,y to the current board
+    int x = relOrigin.x()/rectSize; // pixel to column
+    int y = relOrigin.y()/rectSize; // pixel to row
+    if(x < 0 || y < 0 || x >= predatorPrey->getGamesize() || y >= predatorPrey->getGamesize()) return; // If x or y is outOfBounds
+
+    if(this->currentGameMode == 1){ // Game on focus: Predator Prey
+        Cell cell = predatorPrey->getCell(x,y);
+        if(cell.getStatus() != currentCellMode){
+            predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));
+            adjustingPredPreyCounter(cell);
+        }
+        if(currentCellMode == 4) predatorPrey->killCell(x,y);
+
+    }else if(currentGameMode == 0){ // Game on focus: Game of Life
+        this->gameOfLife->setCellState(x,y,true); //toggle cell state
+    }
+}
+
+void GameField::adjustingPredPreyCounter(Cell cell){
+    if(currentCellMode == 1){                   //CellMode is Predator
+        predatorPrey->increasePredatorCount();
+        if(cell.isPrey()){
+            predatorPrey->decreasePreyCount();
+        }
+    }else if(currentCellMode == 2){             //CellMode is Prey
+        predatorPrey->increasePreyCount();
+        if(cell.isPredator()){
+            predatorPrey->decreasePredatorCount();
+        }
+    }else{                                      //CellMode is either Food or Dead
+        if(cell.isPrey()){
+            predatorPrey->decreasePreyCount();
+        } else if(cell.isPredator()){
+            predatorPrey->decreasePredatorCount();
+        }
+    }
+}
+
+void GameField::setCurrentCellMode(int cm){
+    this->currentCellMode = cm;
+}
+
+void GameField::setCurrentGameMode(int gm){
+    this->currentGameMode = gm;
 }
 
 void GameField::mousePressEvent(QMouseEvent *e){
@@ -133,53 +184,11 @@ void GameField::mousePressEvent(QMouseEvent *e){
      * Gets the x and y pos of the mouseclick on the field and fills the associated rect blue
      */
     this->mouseDrag = true;
-    mouseIsDragged();
-}
-
-void GameField::mouseIsDragged(){
-    QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
-    QPointF relativeOrigin = mapToScene(origin);    // map x,y to the current board
-    int x = relativeOrigin.x()/10; // pixel to column
-    int y = relativeOrigin.y()/10; // pixel to row
-    if(x < 0 || y < 0 || x >= predatorPrey->getGamesize() || y >= predatorPrey->getGamesize()){return;}
-    if(this->currentGameMode == 1){
-        Cell currentCell = predatorPrey->getCell(x,y);
-        if(currentCell.getStatus() != currentCellMode){
-            predatorPrey->setCell(Cell(new QPoint(x,y),predatorPrey->getMaxLifetime(),currentCellMode));
-            if(currentCellMode == 1){
-                predatorPrey->increasePredatorCount();
-                if(currentCell.isPrey()){
-                    predatorPrey->decreasePreyCount();
-                }
-            }else if(currentCellMode == 2){
-                predatorPrey->increasePreyCount();
-                if(currentCell.isPredator()){
-                    predatorPrey->decreasePredatorCount();
-                }
-            }else if(currentCellMode == 3){
-                if(currentCell.isPrey()){
-                    predatorPrey->decreasePreyCount();
-                } else if(currentCell.isPredator()){
-                    predatorPrey->decreasePredatorCount();
-                }
-            }else{
-                if(currentCell.isPredator()){
-                    predatorPrey->decreasePredatorCount();
-                }else if(currentCell.isPrey()){
-                    predatorPrey->decreasePreyCount();
-                }
-                predatorPrey->setCell(Cell(new QPoint(x,y)));
-            }
-        }
-    }else if(currentGameMode == 0){
-        this->gameOfLife->setCellState(x,y,true); //toggle cell state
-    }
+    cellUpdate();
 }
 
 void GameField::mouseMoveEvent(QMouseEvent *event){
-    if(mouseDrag){
-        mouseIsDragged();
-    }
+    if(mouseDrag) cellUpdate();
 }
 
 void GameField::mouseReleaseEvent(QMouseEvent *event){

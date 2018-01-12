@@ -36,12 +36,12 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     cellModeList[3] = "Dead - White";
 
     //initialize game objects
-    gameOfLife = new GameOfLife(50,500,false); // universeSize, intervall, doEvolution
+    gameOfLife = new GameOfLife(50,100,false); // universeSize, intervall, doEvolution
     snake = new Snake(50);  // dim for placing food
     predatorPrey = new PredatorVictim(50,25);
 
     // initialize grid
-    gameField = new GameField(gameOfLife, predatorPrey);
+    gameField = new GameField(gameOfLife, snake, predatorPrey);
 
     //setup UI
     this->setupUI();
@@ -109,15 +109,12 @@ void CAbase::paintEvent(QPaintEvent *event){
      * Chooses which game should be drawn
      */
     gameField->clear(); //emptying field
-    int dim = universeSize->value();
     if(gameMode->currentText()==gameModeList[2]){
-        gameField->drawPedatorPreyField(dim, predatorPrey);
+        gameField->drawPedatorPreyField();
     }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
-        gameField->drawSnakeField(dim,snake->getTail(),snake->getFood()); // draw board for the snake game
+        gameField->drawSnakeField(universeSize->value()); // draw board for the snake game
     }else{  // Mode => Game of Life
-        for(int i = 0; i < dim*dim; i++){   // for every cell in the GoL
-            gameField->drawGameOfLifeCell(i%dim,i/dim,10,gameOfLife->getCellState(i%dim,i/dim)); // draw cell with given state of the GoL Board
-        }
+        gameField->drawGameOfLifeCell(); // draw cell with given state of the GoL Board
     }
     gameField->showField(); // make board visible
 }
@@ -277,7 +274,7 @@ void CAbase::setupUI(){
     gameMode->addItem(gameModeList[0]);
     gameMode->addItem(gameModeList[1]);
     gameMode->addItem(gameModeList[2]); // for the next MileStones!
-    gameMode->addItem(gameModeList[3]);
+    //gameMode->addItem(gameModeList[3]);
 
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);
