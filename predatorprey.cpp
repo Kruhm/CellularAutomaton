@@ -59,19 +59,21 @@ void PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, ve
     int newX = 0;
     int newY = 0;
 
+    cell.decrementLifetime();
     if(!nourishment.empty()){ // If cell can eat a neighbour
         if(cell.isPredator()) amountOfPrey--; // If Predator eats a Prey, reduce the PreyCounter
         int foodIdx = rand() % nourishment.size();
         newX = x + nourishment[foodIdx][0];
         newY = y + nourishment[foodIdx][1];
-        cell.setLifetime(this->maxLifetime+1); //+1 bcs its getting decremented later;
+        cell.setLifetime(this->maxLifetime); //+1 bcs its getting decremented later;
     }else if(!freeNeighbour.empty()){ // If cell has a free neighbour to move to
         int freeNeighbourIdx = rand() % freeNeighbour.size();
         newX = x + freeNeighbour[freeNeighbourIdx][0];
         newY = y + freeNeighbour[freeNeighbourIdx][1];
+    }else{
+        return;
     }
 
-    cell.decrementLifetime();
     if(cell.lostItsLife()){
         cellDies(cell);
         return;

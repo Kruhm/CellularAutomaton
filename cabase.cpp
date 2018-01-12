@@ -158,17 +158,18 @@ void CAbase::keyPressEvent(QKeyEvent *e){
 }
 
 void CAbase::doingTehPrivateThing(){
-    hash<string> hashed;
+    hash<string> hashed; // IF the KC is entered
     if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
         if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
         gameMode->addItem("You found a secret!");
-        gameMode->setCurrentIndex(3);}
-        timer->setInterval(500);
+        gameMode->setCurrentIndex(3);
+        timer->setInterval(250);
         player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
         player->setVolume(10);
         player->setPosition(50000);
         timer->start();
         player->play();
+        }
     }else{
         scrString = "";
     }
