@@ -204,6 +204,8 @@ void CAbase::onIntervalValueChanged(){
 }
 
 void CAbase::onGameModeChanged(){
+    timer->stop();
+    gameOfLife->setDoEvolution(0);
     if(gameMode->currentText()==gameModeList[2]){
         gameField->setCurrentGameMode(1);
         predatorPrey->createRandomGame();
@@ -275,7 +277,7 @@ void CAbase::setupUI(){
     gameMode->addItem(gameModeList[0]);
     gameMode->addItem(gameModeList[1]);
     gameMode->addItem(gameModeList[2]); // for the next MileStones!
-    //gameMode->addItem(gameModeList[3]);
+    gameMode->addItem(gameModeList[3]);
 
     //Remove vertical spacing of the labels
     universeSizeLbl->setFixedHeight(10);
