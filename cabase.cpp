@@ -6,7 +6,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
      * Convey's Game of Life, Snake and Predator-Prey
      */
     //Initialize Attributesses
-    timer = new QTimer(this);
+    gameUpdateTimer = new QTimer(this);
     mainLayout = new QHBoxLayout(this);
     menuSide = new QGridLayout(this);
     universeSizeLbl = new QLabel(this);
@@ -55,7 +55,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     connect(gameInterval,SIGNAL(valueChanged(int)),this,SLOT(onIntervalValueChanged()));
     connect(gameMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onGameModeChanged()));
     connect(cellMode,SIGNAL(currentTextChanged(QString)),this,SLOT(onCellModeValueChanged()));
-    connect(timer,SIGNAL(timeout()),this,SLOT(updateSelectedGame()));
+    connect(gameUpdateTimer,SIGNAL(timeout()),this,SLOT(updateSelectedGame()));
 
     // timer to update the gamefield every 50ms
     updateTimer = new QTimer(this);
@@ -81,7 +81,7 @@ void CAbase::updateSelectedGame(){
         updatePredatorPrey();
     }else if(gameMode->currentText()==gameModeList[1]){   // If Snake
         updateSnake();
-    }else if(gameMode->currentText()==gameModeList[0]){                                          //Else game of Life
+    }else if(gameMode->currentText()==gameModeList[0]){   //If game of Life
         updateGameOfLife();
     }else{
         gameField->drawRandom();
@@ -89,55 +89,86 @@ void CAbase::updateSelectedGame(){
 }
 
 void CAbase::updateSnake(){
+    /*
+     * Update Snake for a tick
+     */
     int dim = universeSize->value();
     snake->setMovedOnTick(false);   // new tick new direction possible
     snake->eat();       // checks for food
     snake->move(dim);   // move snake body
     if(snake->collision(dim)){  // if snake collides
-        timer->stop();
+        gameUpdateTimer->stop();
         snake->die();   // open dying message
     }
 }
 
 void CAbase::updateGameOfLife(){
+    /*
+     * Start running the Game of Life game
+     */
     if(!gameOfLife->isRunning()){   // if the thread isn't currently running
         gameOfLife->start();    // start the GoL thread
     }
 }
 
 void CAbase::updatePredatorPrey(){
+    /*
+     * Update the Predator Prey Game for a tick
+     */
     predatorPrey->moveCells();
     predatorPrey->uncheckCells();
     if(predatorPrey->finish()){
-        timer->stop();
+        gameUpdateTimer->stop();
         predatorPrey->setMaxLifetime(lifetime->value());
         predatorPrey->newGame();
     }
 }
 
+void CAbase::doingTehPrivateThing(){
+    /*
+     * Ye know, teh private ting!
+     */
+    hash<string> hashed; // IF the KC is entered
+    if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
+        if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
+        gameMode->addItem("You found a secret!");
+        gameMode->setCurrentIndex(3);
+        gameUpdateTimer->setInterval(250);
+        player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
+        player->setVolume(10);
+        player->setPosition(50000);
+        gameUpdateTimer->start();
+        player->play();
+        }
+    }else{
+        scrString = "";
+    }
+}
+
 void CAbase::paintEvent(QPaintEvent *event){
     /*
-     * Draws the grid on the left side of the Window.
-     * Chooses which game should be drawn
+     * Draws the currently selected game
+     * on the game board.
      */
     if(gameMode->currentIndex() != 3){
         gameField->clear(); //emptying field
     }
 
-    if(gameMode->currentText()==gameModeList[2]){
+    if(gameMode->currentText()==gameModeList[2]){   // if Mode => PredatorPrey
         gameField->drawPedatorPreyField();
     }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
         gameField->drawSnakeField(universeSize->value()); // draw board for the snake game
     }else if(gameMode->currentText()==gameModeList[0]){  // Mode => Game of Life
-        gameField->drawGameOfLifeCell(); // draw cell with given state of the GoL Board
+
+        gameField->drawGameOfLifeField(); // draw Game of Life board
     }
-    gameField->showField(); // make board visible
+    gameField->showField();
 }
 
 void CAbase::keyPressEvent(QKeyEvent *e){
     /*
-     * Key Event Handler
-     * evaluates the key pressed.
+     * Gives the snake the information
+     * to move in the right direction.
      */
     int snakeDirection = snake->getDirection();
     scrString+=QKeySequence(e->key()).toString().toStdString();
@@ -157,57 +188,44 @@ void CAbase::keyPressEvent(QKeyEvent *e){
     snake->setMovedOnTick(true); // snake can change direction only one time per tick
 }
 
-void CAbase::doingTehPrivateThing(){
-    hash<string> hashed; // IF the KC is entered
-    if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
-        if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
-        gameMode->addItem("You found a secret!");
-        gameMode->setCurrentIndex(3);
-        timer->setInterval(250);
-        player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
-        player->setVolume(10);
-        player->setPosition(50000);
-        timer->start();
-        player->play();
-        }
-    }else{
-        scrString = "";
-    }
-}
-
 void CAbase::onStartBtnClicked(){
     /*
-     * Starts the GameOfLife Thread with the given interval
+     * Starts the currently
+     * selected Game.
      */
     if(gameMode->currentText() == gameModeList[0]){ //Game of Life
         gameOfLife->setDoEvolution(true); // makes evolution in Game of Life possible
         gameOfLife->start();
-        timer->start(50);
+        gameUpdateTimer->start(50);
     }else{                                          //If other game
-        timer->start(gameInterval->value());
+        gameUpdateTimer->start(gameInterval->value());
     }
 }
 
 void CAbase::onPauseBtnClicked(){
     /*
      * Stops the currently running GameOfLife Thread
+     * and stops the updateGame timer
      */
     gameOfLife->setDoEvolution(false);
-    timer->stop();
+    gameUpdateTimer->stop();
 }
 
 void CAbase::onClearBtnClicked(){
     /*
-     * Wipes the Board of every living cell
+     * Wipes the Board for every game
      */
-    timer->stop();
+    gameUpdateTimer->stop();
     gameOfLife->wipe();
     snake->reset();
     predatorPrey->clear();
 }
 
 void CAbase::onNewGameBtnClicked(){
-    timer->stop();
+    /*
+     * Resets every game to its default state
+     */
+    gameUpdateTimer->stop();
     gameOfLife->wipe();
     gameOfLife->createGlider();
     snake->reset();
@@ -217,11 +235,12 @@ void CAbase::onNewGameBtnClicked(){
 
 void CAbase::onUniverseSizeChanged(){
     /*
-     * Wipes the board and changes the universe size
+     * Wipes the board and updates the
+     * universe size for every game
      */
     if(universeSize->value()<10 || universeSize->value() > 100){return;}
-    timer->stop();
-    gameOfLife->setSize(universeSize->value());
+    gameUpdateTimer->stop();
+    gameOfLife->resize(universeSize->value());
     predatorPrey->setGameSize(universeSize->value());
     predatorPrey->newGame();
     snake->reset();
@@ -230,14 +249,20 @@ void CAbase::onUniverseSizeChanged(){
 
 void CAbase::onIntervalValueChanged(){
     /*
-     * changes the refresh rate of the evolution done by the GameOfLife object
+     * changes the refresh rate of the evolution
+     * done by the GameOfLife object
      */
-    timer->setInterval(gameInterval->value());
+    gameUpdateTimer->setInterval(gameInterval->value());
     gameOfLife->setSleepTime(gameInterval->value());
 
 }
 
 void CAbase::onGameModeChanged(){
+    /*
+     * hides or show spinboxes and
+     * labels for the games they belong
+     * to.
+     */
     gameOfLife->setDoEvolution(0);
     if(gameMode->currentText()==gameModeList[2]){
         gameField->setCurrentGameMode(1);
@@ -257,6 +282,13 @@ void CAbase::onGameModeChanged(){
 }
 
 void CAbase::onCellModeValueChanged(){
+    /*
+     * For the Predator Prey Game,
+     * the gamefield gets the information,
+     * which cell mode is selected, so the
+     * right cells can be set, when clicking
+     * on the field
+     */
     if(cellMode->currentText() == cellModeList[0]){
         gameField->setCurrentCellMode(1);
     }else if(cellMode->currentText() == cellModeList[1]){
@@ -335,10 +367,13 @@ void CAbase::setupUI(){
     menuSide->addWidget(lifetime,9,0,1,4); // tenth Row
     menuSide->addWidget(gameMode,10,0,1,4,Qt::AlignBottom); // eleventh Row
 
+    //hiding labels which aren't needed yet
     cellMode->hide();
     cellModelbl->hide();
     lifetime->hide();
     lifetimeLbl->hide();
+
+    //Adding the Layouts to the main layout
     mainLayout->addWidget(gameField);
     mainLayout->addLayout(menuSide);
     mainLayout->setAlignment(Qt::AlignTop);

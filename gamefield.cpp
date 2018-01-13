@@ -1,15 +1,15 @@
 #include "gamefield.h"
 
-GameField::GameField(GameOfLife* gol, Snake* snake, PredatorPrey* pP, QGraphicsView *parent): QGraphicsView(parent){
+GameField::GameField(GameOfLife* gameOfLife, Snake* snake, PredatorPrey* predatorPrey, QGraphicsView *parent): QGraphicsView(parent){
     /*
      * GraphicsView holding a cellular grid
      * GameMode 1: Game of Life | 2: Predator Prey
      * CellMode 1: Predator | 2: Prey | 3: Food | 4: Dead
      */
     field = new QGraphicsScene(this);
-    this->gameOfLife = gol;
-    this->predatorPrey = pP;
+    this->gameOfLife = gameOfLife;
     this->snake = snake;
+    this->predatorPrey = predatorPrey;
     this->currentCellMode = 1;
     this->currentGameMode = 0;
     this->mouseDrag = false;
@@ -44,6 +44,12 @@ void GameField::showField(){
 }
 
 void GameField::drawSnakeField(const int fieldSize){
+    /*
+     * Draws the field for the game Snake
+     * Green - Snake
+     * Red - Food
+     * otherwise - empty cell
+     */
     field->setBackgroundBrush(*bgBrush);    // Make the background grey
     SnakeBodyPart* tail = this->snake->getTail();
     QPoint* food = this->snake->getFood();
@@ -108,7 +114,7 @@ void GameField::drawPedatorPreyField(){
     }
 }
 
-void GameField::drawGameOfLifeCell(){
+void GameField::drawGameOfLifeField(){
     /*
      * Draws a rectangle on a given x and y position with a given size.
      * Rect will be filled blue if cellState is true, otherwise it's white
@@ -132,12 +138,16 @@ void GameField::drawGameOfLifeCell(){
 }
 
 void GameField::drawRandom(){
-    const int gameSize = predatorPrey->getGamesize();
+    /*
+     * this does melt your pc
+     */
+    const int gameSize = 25;
     srand(time(0) + rand());
     for(int y = 0; y < gameSize; y++){
+        QColor c(rand()%256,rand()%256,rand()%256);
         for(int x = 0; x < gameSize; x++){
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
-            brush->setColor(QColor(rand()%256,rand()%256,rand()%256));
+            brush->setColor(c);
             this->field->addRect(rect,*pen,*brush); //add rect to the board
         }
 
@@ -145,6 +155,10 @@ void GameField::drawRandom(){
 }
 
 void GameField::cellUpdate(){
+    /*
+     * Updates the cell under the cursor
+     * for the current selected game.
+     */
     QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
     QPointF relOrigin = mapToScene(origin);    // map x,y to the current board
     int x = relOrigin.x()/rectSize; // pixel to column
@@ -165,6 +179,11 @@ void GameField::cellUpdate(){
 }
 
 void GameField::adjustingPredPreyCounter(Cell cell){
+    /*
+     * adjust the counters
+     * in the PredatorPrey Game
+     * when the given cell is overwritten.
+     */
     if(currentCellMode == 1){                   //CellMode is Predator
         predatorPrey->increasePredatorCount();
         if(cell.isPrey()){
@@ -193,9 +212,6 @@ void GameField::setCurrentGameMode(int gm){
 }
 
 void GameField::mousePressEvent(QMouseEvent *e){
-    /*
-     * Gets the x and y pos of the mouseclick on the field and fills the associated rect blue
-     */
     this->mouseDrag = true;
     cellUpdate();
 }

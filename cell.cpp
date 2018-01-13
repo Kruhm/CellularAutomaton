@@ -16,43 +16,12 @@ Cell::Cell(QPoint* pos, int lifetime, int status){
      * pos -> position of cell
      * lifetime -> lifetime of cell, -1 for infinite lifetime
      * Status -> 1: Predator, 2: Prey, 3: Food
+     * Checked -> if cell is already looked at
      */
     this->pos = pos;
     this->lifetime = lifetime;
     this->status = status;
     this->checked = false;
-}
-
-void Cell::decrementLifetime(){
-    this->lifetime--;
-}
-
-bool Cell::lostItsLife(){
-    return lifetime == 0;
-}
-
-void Cell::setPos(QPoint *pos){
-    this->pos = pos;
-}
-
-void Cell::setLifetime(int lifetime){
-    this->lifetime = lifetime;
-}
-
-void Cell::setstate(int status){
-    this->status = status;
-}
-
-void Cell::setChecked(bool checked){
-    this->checked = checked;
-}
-
-QPoint *Cell::getPos(){
-    return pos;
-}
-
-int Cell::getLiftime(){
-    return lifetime;
 }
 
 bool Cell::isChecked(){
@@ -75,6 +44,30 @@ bool Cell::isDead(){
     return status == 4;
 }
 
+bool Cell::lostItsLife(){
+    return lifetime == 0;
+}
+
+void Cell::decreaseLifetime(){
+    this->lifetime--;
+}
+
+void Cell::setPos(QPoint *pos){
+    this->pos = pos;
+}
+
+void Cell::setLifetime(int lifetime){
+    this->lifetime = lifetime;
+}
+
+void Cell::setstate(int status){
+    this->status = status;
+}
+
+void Cell::setChecked(bool checked){
+    this->checked = checked;
+}
+
 int Cell::getX(){
     return this->pos->x();
 }
@@ -87,3 +80,10 @@ int Cell::getStatus(){
     return this->status;
 }
 
+QPoint *Cell::getPos(){
+    return pos;
+}
+
+int Cell::getLiftime(){
+    return lifetime;
+}

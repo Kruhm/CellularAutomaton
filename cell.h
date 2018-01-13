@@ -14,22 +14,22 @@ public:
     Cell(QPoint *pos);
     Cell(QPoint* pos, int lifetime, int status);
 
+    bool isDead();
+    bool isFood();
+    bool isPrey();
+    bool isPredator();
+    bool isChecked();
+    bool lostItsLife();
+    void decreaseLifetime();
+    int getX();
+    int getY();
+    int getStatus();
     int getLiftime();
-    void decrementLifetime();
+    QPoint* getPos();
     void setPos(QPoint* pos);
     void setLifetime(int lifetime);
     void setstate(int status);
     void setChecked(bool checked);
-    bool lostItsLife();
-    bool isChecked();
-    bool isDead();
-    bool isPredator();
-    bool isPrey();
-    bool isFood();
-    int getX();
-    int getY();
-    int getStatus();
-    QPoint* getPos();
 };
 
 #endif // CELL_H

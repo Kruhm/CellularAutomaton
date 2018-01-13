@@ -25,7 +25,7 @@ class CAbase : public QWidget{
     Q_OBJECT
 
 private:
-    QTimer *timer;
+    QTimer *gameUpdateTimer;
     QTimer* updateTimer;
 
     //Gamesses

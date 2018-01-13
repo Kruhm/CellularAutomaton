@@ -35,7 +35,7 @@ public:
     GameField(GameOfLife* gol,Snake* snake, PredatorPrey* pP, QGraphicsView *parent = 0);
     ~GameField();
     void drawSnakeField(int gameSize);
-    void drawGameOfLifeCell();
+    void drawGameOfLifeField();
     void drawPedatorPreyField();
     void drawRandom();
     void clear();

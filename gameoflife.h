@@ -23,15 +23,15 @@ public:
     void wipe();
     void createGlider();
     void setDim(int dim);
-    void setSize(int dim);
+    void resize(int dim);
     void setDoEvolution(bool doEvolution);
     void setSleepTime(int sleepTime);
     void setCellState(int x, int y, bool state);
     void setNewCellState(int x, int y, bool state);
     int getDim();
     int convertToOneDimension(int x, int y);
-    bool apply_rules(int x, int y);
-    bool field_exists(int x, int y);
+    bool applyRules(int x, int y);
+    bool inBounds(int x, int y);
     bool getCellState(int x, int y);
     bool getnewCellState(int x, int y);
 
