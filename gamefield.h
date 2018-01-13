@@ -32,8 +32,13 @@ private:
 
     void adjustingPredPreyCounter(Cell cell);
 public:
+    GameField(QGraphicsView *parent = 0);
     GameField(GameOfLife* gol,Snake* snake, PredatorPrey* pP, QGraphicsView *parent = 0);
     ~GameField();
+    void addGame(GameOfLife* gameOfLife);
+    void addGame(Snake* snake);
+    void addGame(PredatorPrey* predatorPrey);
+    void addGame(GameOfLife* gameOfLife, Snake* snake, PredatorPrey* predatorPrey);
     void drawSnakeField(int gameSize);
     void drawGameOfLifeField();
     void drawPedatorPreyField();

@@ -1,5 +1,22 @@
 #include "gamefield.h"
 
+GameField::GameField(QGraphicsView *parent): QGraphicsView(parent){
+    /*
+     * GraphicsView holding a cellular grid
+     * GameMode 1: Game of Life | 2: Predator Prey
+     * CellMode 1: Predator | 2: Prey | 3: Food | 4: Dead
+     */
+    field = new QGraphicsScene(this);
+    this->currentCellMode = 1;
+    this->currentGameMode = 0;
+    this->mouseDrag = false;
+    this->rectSize = 10;
+    brush = new QBrush(Qt::white);
+    bgBrush = new QBrush(Qt::lightGray);
+    pen = new QPen(Qt::darkGray);
+    this->setScene(field);
+}
+
 GameField::GameField(GameOfLife* gameOfLife, Snake* snake, PredatorPrey* predatorPrey, QGraphicsView *parent): QGraphicsView(parent){
     /*
      * GraphicsView holding a cellular grid
@@ -27,6 +44,20 @@ GameField::~GameField(){
     delete pen;
     delete bgBrush;
     delete brush;
+}
+void GameField::addGame(GameOfLife *gameOfLife){
+    this->gameOfLife = gameOfLife;
+}
+void GameField::addGame(Snake* snake){
+    this->snake = snake;
+}
+void GameField::addGame(PredatorPrey* predatorPrey){
+    this->predatorPrey = predatorPrey;
+}
+void GameField::addGame(GameOfLife* gameOfLife, Snake* snake, PredatorPrey* predatorPrey){
+    this->gameOfLife = gameOfLife;
+    this->snake = snake;
+    this->predatorPrey = predatorPrey;
 }
 
 void GameField::clear(){
@@ -141,11 +172,11 @@ void GameField::drawRandom(){
     /*
      * this does melt your pc
      */
-    const int gameSize = 25;
+    const int gameSize = 50;
     srand(time(0) + rand());
     for(int y = 0; y < gameSize; y++){
-        QColor c(rand()%256,rand()%256,rand()%256);
         for(int x = 0; x < gameSize; x++){
+            QColor c(rand()%256,rand()%256,rand()%256);
             QRect rect(rectSize*x,rectSize*y,rectSize,rectSize);
             brush->setColor(c);
             this->field->addRect(rect,*pen,*brush); //add rect to the board

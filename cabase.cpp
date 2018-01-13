@@ -22,6 +22,7 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     stopBtn = new QPushButton(this);
     clearBtn = new QPushButton(this);
     newGameBtn = new QPushButton(this);
+    gameField = new GameField();
 
     // initialize options for the game mode combobox
     gameModeList[0] = "Game of Life";
@@ -35,16 +36,16 @@ CAbase::CAbase(QWidget *parent): QWidget(parent){
     cellModeList[2] = "Food - Green";
     cellModeList[3] = "Dead - White";
 
-    //initialize game objects
-    gameOfLife = new GameOfLife(50,100,false); // universeSize, intervall, doEvolution
-    snake = new Snake(50);  // dim for placing food
-    predatorPrey = new PredatorPrey(50,25);
-
-    // initialize grid
-    gameField = new GameField(gameOfLife, snake, predatorPrey);
-
     //setup UI
     this->setupUI();
+
+    //initialize game objects
+    gameOfLife = new GameOfLife(universeSize->value(),gameInterval->value(),false); // universeSize, intervall, doEvolution
+    snake = new Snake(universeSize->value());  // dim for placing food
+    predatorPrey = new PredatorPrey(universeSize->value(),lifetime->value());
+
+    //add games to the board
+    gameField->addGame(gameOfLife, snake, predatorPrey);
 
     //Connect Objects with SLOTS
     connect(startBtn,SIGNAL(clicked()),this,SLOT(onStartBtnClicked()));
@@ -83,8 +84,6 @@ void CAbase::updateSelectedGame(){
         updateSnake();
     }else if(gameMode->currentText()==gameModeList[0]){   //If game of Life
         updateGameOfLife();
-    }else{
-        gameField->drawRandom();
     }
 }
 
@@ -151,17 +150,18 @@ void CAbase::paintEvent(QPaintEvent *event){
      * Draws the currently selected game
      * on the game board.
      */
-    if(gameMode->currentIndex() != 3){
-        gameField->clear(); //emptying field
-    }
+    //if(gameMode->currentIndex() != 3){
+    gameField->clear(); //emptying field
+    //}
 
     if(gameMode->currentText()==gameModeList[2]){   // if Mode => PredatorPrey
         gameField->drawPedatorPreyField();
     }else if(gameMode->currentText()==gameModeList[1]){ // if Mode => Snake
         gameField->drawSnakeField(universeSize->value()); // draw board for the snake game
     }else if(gameMode->currentText()==gameModeList[0]){  // Mode => Game of Life
-
         gameField->drawGameOfLifeField(); // draw Game of Life board
+    }else{
+        gameField->drawRandom();
     }
     gameField->showField();
 }
