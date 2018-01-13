@@ -9,7 +9,6 @@ Snake::Snake(const int DIM){
     spawnFood(DIM);
 
     movedOnTick = false;
-    isEating = false;
 }
 
 bool Snake::collision(int dim){
@@ -32,16 +31,12 @@ bool Snake::collision(int dim){
     return (outOfBounds || canibalism);
 }
 
-void Snake::eat(){
+bool Snake::eat(){
     /*
      * checks if head is on the same cell as the food
      */
     QPoint headPos = head->getPos();
-    isEating = false;
-    if(food->y() == headPos.y() && food->x() == headPos.x()){
-        isEating = true;
-    }
-
+    return (food->y() == headPos.y() && food->x() == headPos.x());
 }
 
 void Snake::spawnFood(const int DIM){
@@ -72,7 +67,7 @@ void Snake::move(const int DIM){
     /*
      * Moves the snake in a given direction specified by a KeyPress
      */
-    if (isEating){  // if snake should be growing instead of moving
+    if (eat()){  // if snake should be growing instead of moving
         head->setParent(new SnakeBodyPart(new QPoint(food->x(),food->y()),nullptr)); //grow a new head
         head = head->getParent();   // change old head to new head
         spawnFood(DIM); // spawn new food on field
@@ -151,10 +146,6 @@ void Snake::setDirection(const int direction){
     this->direction = direction;
 }
 
-void Snake::setIsEating(const bool isEating){
-    this->isEating = isEating;
-}
-
 void Snake::setMovedOnTick(const bool movedOnTick){
     this->movedOnTick = movedOnTick;
 }
@@ -169,10 +160,6 @@ QPoint *Snake::getFood() const{
 
 int Snake::getDirection(){
     return direction;
-}
-
-bool Snake::getIsEating(){
-    return isEating;
 }
 
 bool Snake::getMovedOnTick(){

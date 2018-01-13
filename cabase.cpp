@@ -104,7 +104,8 @@ void CAbase::updateSnake(){
 
 void CAbase::updateGameOfLife(){
     /*
-     * Start running the Game of Life game
+     * Starts the Game of Life
+     * Thread if it isn't already running
      */
     if(!gameOfLife->isRunning()){   // if the thread isn't currently running
         gameOfLife->start();    // start the GoL thread
@@ -131,14 +132,14 @@ void CAbase::doingTehPrivateThing(){
     hash<string> hashed; // IF the KC is entered
     if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
         if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
-        gameMode->addItem("You found a secret!");
-        gameMode->setCurrentIndex(3);
-        gameUpdateTimer->setInterval(250);
-        player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
-        player->setVolume(10);
-        player->setPosition(50000);
-        gameUpdateTimer->start();
-        player->play();
+            gameMode->addItem("You found a secret!");
+            gameMode->setCurrentIndex(3);
+            gameUpdateTimer->setInterval(250);
+            player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
+            player->setVolume(10);
+            player->setPosition(50000);
+            gameUpdateTimer->start();
+            player->play();
         }
     }else{
         scrString = "";

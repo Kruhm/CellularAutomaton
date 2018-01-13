@@ -2,13 +2,14 @@
 
 PredatorPrey::PredatorPrey(const int gameSize, const int lifetime){
     /*
-     * A C++ implementation of the Game Predator-Victim|Predetator-Prey
+     * A C++ implementation of the Game
+     * Predator-Victim|Predetator-Prey
      */
     field.reserve(gameSize*gameSize); // allocate memory to fit the field size
     this->gameSize = gameSize;
     this->maxLifetime = lifetime;
     this->preySpawnRate = 0.05;
-    this->predatorSpawnRate = 0.01;
+    this->predatorSpawnRate = 0.02;
     this->foodSpawnRate = 0.1;
     clear();
 }
@@ -25,8 +26,11 @@ void PredatorPrey::moveCells(){
             if(!currentCell.isChecked() && (currentCell.isPredator() || currentCell.isPrey())){
                 srand((int) time(0) + rand());
                 vector<vector<vector<int>>> possibleMoves = possibleCellMoves(currentCell);
+                currentCell.decreaseLifetime();
                 if(!possibleMoves.empty()) // If cell can move
-                    repositionCell(currentCell,possibleMoves[0],possibleMoves[1]);
+                    currentCell = repositionCell(currentCell,possibleMoves[0],possibleMoves[1]);
+                    setCell(currentCell);
+                    cellIsDying(currentCell);
             }
         }
     }
@@ -35,7 +39,7 @@ void PredatorPrey::moveCells(){
 vector<vector<vector<int>>> PredatorPrey::possibleCellMoves(Cell cell){
     /*
      * returns all possible moves
-     * seperated in fist nourishmentCells
+     * seperated in first nourishmentCells
      * and second freeCells
      * otherwise returns an empty vector
      */
@@ -44,10 +48,11 @@ vector<vector<vector<int>>> PredatorPrey::possibleCellMoves(Cell cell){
     vector<vector<int>> nourishment;
     vector<vector<int>> freeNeighbours;
 
-    for(int j = -1; j < 2;j++){ // look at adjacent cells
-        if(y + j < 0 || j + y >= gameSize) continue; // y boundaries
+    // look at adjacent cells
+    for(int j = -1; j < 2;j++){
+        if(y+j < 0 || y+j >= gameSize) continue; // y boundaries
         for(int i = -1; i < 2;i++){
-            if(i + x < 0 || i + x >= gameSize) continue; // x boundaries
+            if(i+x < 0 || x+i >= gameSize) continue; // x boundaries
             if(j == 0 && i == 0) continue; // skip own cell
             Cell neighbour = this->getCell(x+i, y+j);
             bool predCanEat = cell.isPredator() && neighbour.isPrey();
@@ -56,7 +61,6 @@ vector<vector<vector<int>>> PredatorPrey::possibleCellMoves(Cell cell){
                 vector<int> relNeighbour = {i,j};
                 nourishment.push_back(relNeighbour);
             }else if(cell.isPrey() && neighbour.isPredator()){ // Prey can't move
-                cell.decreaseLifetime();
                 return {};
             }else if(neighbour.isDead()){
                 vector<int> relFreeSpace = {i,j};
@@ -67,7 +71,7 @@ vector<vector<vector<int>>> PredatorPrey::possibleCellMoves(Cell cell){
     return {nourishment,freeNeighbours};
 }
 
-void PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, vector<vector<int>> freeNeighbour){
+Cell PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, vector<vector<int>> freeNeighbour){
     /*
      * moves given cell to its possible
      * new position, favouring the cells with
@@ -79,29 +83,18 @@ void PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, ve
     int newX = 0;
     int newY = 0;
 
-    cell.decreaseLifetime();
     if(!nourishment.empty()){                   // If cell can eat a neighbour
         if(cell.isPredator()) amountOfPrey--;   // If Predator eats a Prey, reduce the PreyCounter
-        int foodIdx = rand() % nourishment.size();
-        newX = x + nourishment[foodIdx][0];
-        newY = y + nourishment[foodIdx][1];
+        int i = rand() % nourishment.size();    // random nourishment
+        newX = x + nourishment[i][0];
+        newY = y + nourishment[i][1];
         cell.setLifetime(this->maxLifetime);
     }else if(!freeNeighbour.empty()){           // If cell has a free neighbour to move to
-        int freeNeighbourIdx = rand() % freeNeighbour.size();
-        newX = x + freeNeighbour[freeNeighbourIdx][0];
-        newY = y + freeNeighbour[freeNeighbourIdx][1];
+        int i = rand() % freeNeighbour.size();  // random neighbour
+        newX = x + freeNeighbour[i][0];
+        newY = y + freeNeighbour[i][1];
     }else{
-        return;
-    }
-
-    // If the cell lifetime reached zero.
-    if(cell.lostItsLife()){
-        if(field[y * gameSize + x].isPredator())
-            amountOfPredators--;
-        else if(field[y * gameSize + x].isPrey())
-            amountOfPrey--;
-        killCell(x,y);
-        return;
+        return cell;
     }
 
     //move cell to newX,newY position
@@ -109,7 +102,23 @@ void PredatorPrey::repositionCell(Cell cell, vector<vector<int>> nourishment, ve
     cell.setPos(newPos);
     cell.setChecked(true);
     killCell(x,y);
-    setCell(cell);
+    return cell;
+
+}
+
+void PredatorPrey::cellIsDying(Cell cell){
+    /*
+     * checks if the cell lifetime
+     * reached zero, then removes it
+     * from the game.
+     */
+    if(cell.lostItsLife()){
+        if(cell.isPredator())
+            amountOfPredators--;
+        else
+            amountOfPrey--;
+        killCell(cell.getX(),cell.getY());
+    }
 }
 
 void PredatorPrey::clear(){

@@ -27,7 +27,7 @@ private:
     const int DEAD= 4;
 
     vector<vector<vector<int>>> possibleCellMoves(Cell cell);
-    void repositionCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
+    Cell repositionCell(Cell currentCell, vector<vector<int>> nourishment, vector<vector<int>> freeSpace);
 
 public:
     PredatorPrey(int gameSize, int maxLifetime);
@@ -35,6 +35,7 @@ public:
     void clear();
     void newGame();
     void newGameCellPosition(int liftime, int cellState, int count);
+    void cellIsDying(Cell cell);
     void killCell(int x, int y);
     bool finish(bool endText=true);
     void uncheckCells();
