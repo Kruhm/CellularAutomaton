@@ -128,8 +128,9 @@ void CAbase::doingTehPrivateThing(){
     /*
      * Ye know, teh private ting!
      */
-    hash<string> hashed; // IF the KC is entered
-    if(hashed(scrString)==scr1 || hashed(scrString)==scr2){
+    hash<string> hashed; // IF the KC is
+    qDebug() << hashed(scrString);
+    if(hashed(scrString)==scr1 || hashed(scrString)==scr2 || hashed(scrString) == 11394696519889024774){
         if(gameMode->itemText(gameMode->count()-1) != "You found a secret!"){
             gameMode->addItem("You found a secret!");
             gameMode->setCurrentIndex(3);
