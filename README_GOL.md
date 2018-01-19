@@ -1,7 +1,7 @@
 Titel: GameOfLife Version 1.0 22/11/2017
 
-Autorenschaft: 	Sahra Teichmann (6319245), Nicolai Gennrich (6375425),
-				Marian Stiehler (6074535), Carina Pfaff (5852091)
+Autorenschaft: 	Nicolai Gennrich,Sahra Teichmann, 
+				Marian Stiehler, Carina Pfaff
 
 			
 Benutzungshinweise

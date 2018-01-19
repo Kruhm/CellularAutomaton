@@ -29,6 +29,7 @@ private:
     int currentCellMode;
     int currentGameMode;
     bool mouseDrag;
+    bool golCellState;
 
     void adjustingPredPreyCounter(Cell cell);
 public:

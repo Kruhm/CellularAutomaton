@@ -134,7 +134,7 @@ void Snake::create(){
      * creates 3 snake body parts with a head and a tail, going from (0,0) to (0,2)
      * standard direction when starting the game is set to moving down
      */
-    tail = new SnakeBodyPart(new QPoint(0,0),new SnakeBodyPart(new QPoint(0,1),new SnakeBodyPart(new QPoint(0,2),nullptr))); // create snake with 3 body parts
+    tail = new SnakeBodyPart(new QPoint(0,0),new SnakeBodyPart(new QPoint(0,0),new SnakeBodyPart(new QPoint(0,0),nullptr))); // create snake with 3 body parts
     head = tail;
     while(head->getParent()){ // As long as the current SnakePart has a Parent
         head = head->getParent(); // go to the next BodyPart

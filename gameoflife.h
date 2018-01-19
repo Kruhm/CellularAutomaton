@@ -11,6 +11,7 @@ private:
     //ATTRIBUTES
     int dim;
     int sleepTime;
+    bool torus;
     bool doEvolution;
     bool* currentState = new bool[0];
     bool* newState = new bool[0];

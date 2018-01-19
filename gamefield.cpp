@@ -7,6 +7,7 @@ GameField::GameField(QGraphicsView *parent): QGraphicsView(parent){
      * CellMode 1: Predator | 2: Prey | 3: Food | 4: Dead
      */
     field = new QGraphicsScene(this);
+    this->golCellState = false;
     this->currentCellMode = 1;
     this->currentGameMode = 0;
     this->mouseDrag = false;
@@ -205,7 +206,7 @@ void GameField::cellUpdate(){
         if(currentCellMode == 4) predatorPrey->killCell(x,y);
 
     }else if(currentGameMode == 0){ // Game on focus: Game of Life
-        this->gameOfLife->setCellState(x,y,true); //toggle cell state
+        this->gameOfLife->setCellState(x,y,golCellState); //toggle cell state
     }
 }
 
@@ -243,7 +244,12 @@ void GameField::setCurrentGameMode(int gm){
 }
 
 void GameField::mousePressEvent(QMouseEvent *e){
+    QPoint origin = mapFromGlobal(QCursor::pos());  // get mouse pos
+    QPointF relOrigin = mapToScene(origin);    // map x,y to the current board
+    int x = relOrigin.x()/rectSize; // pixel to column
+    int y = relOrigin.y()/rectSize; // pixel to row
     this->mouseDrag = true;
+    this->golCellState = !gameOfLife->getCellState(x,y);
     cellUpdate();
 }
 

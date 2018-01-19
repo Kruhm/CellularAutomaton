@@ -1,7 +1,7 @@
 CellularAutomaton Version 12.03a 16/01/2018
 
-Autorenschaft: 	Nicolai Gennrich (6375425), Sahra Teichmann (6319245), 
-				Marian Stiehler (6074535), Carina Pfaff (5852091)
+Autorenschaft: 	Nicolai Gennrich, Sahra Teichmann, 
+				Marian Stiehler, Carina Pfaff
 
 				
 Benutzungshinweise

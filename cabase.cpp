@@ -228,6 +228,7 @@ void CAbase::onNewGameBtnClicked(){
      * Resets every game to its default state
      */
     gameUpdateTimer->stop();
+    gameOfLife->setDoEvolution(false);
     gameOfLife->wipe();
     gameOfLife->createGlider();
     snake->reset();
