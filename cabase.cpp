@@ -135,11 +135,13 @@ void CAbase::doingTehPrivateThing(){
             gameMode->addItem("You found a secret!");
             gameMode->setCurrentIndex(3);
             gameUpdateTimer->setInterval(250);
+            gameUpdateTimer->start();
+            /* Uncomment to play music
             player->setMedia(QUrl("qrc:sounds/moneyisland.mp3"));
             player->setVolume(10);
             player->setPosition(50000);
-            gameUpdateTimer->start();
             player->play();
+            */
         }
     }else{
         scrString = "";

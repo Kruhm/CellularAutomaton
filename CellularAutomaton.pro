@@ -39,6 +39,3 @@ HEADERS += cabase.h \
         snakeBodyPart.h \
         cell.h \
     predatorprey.h
-
-RESOURCES += \
-    res.qrc
